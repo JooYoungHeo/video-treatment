@@ -11,7 +11,7 @@ const devPort = 3001;
 if (process.env.NODE_ENV === 'development') {
     console.log('server is running on development mode');
 
-    const config = require('../webpack.dev.config');
+    const config = require('../../webpack.dev.config');
     let compiler = webpack(config);
     let devServer = new WebpackDevServer(compiler, config.devServer);
 
@@ -20,7 +20,7 @@ if (process.env.NODE_ENV === 'development') {
     });
 }
 
-app.use('/', express.static(`${__dirname}/../public`));
+app.use('/', express.static(`${__dirname}/../../public`));
 app.use('/index', routes);
 
 const server = app.listen(port, () => {

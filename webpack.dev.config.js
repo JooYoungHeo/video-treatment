@@ -3,7 +3,7 @@ let webpack = require('webpack');
 module.exports = {
 	mode: 'development',
     entry: [
-    	'./src/index.js',
+    	'./frontend/index.js',
 		'webpack-dev-server/client?http://0.0.0.0:3001',
 		'webpack/hot/only-dev-server'
 	],
@@ -11,6 +11,24 @@ module.exports = {
         path: '/',
         filename: 'bundle.js'
     },
+	externals: {
+		Config: JSON.stringify({
+            creds: {
+                appId: 76478,
+                authKey: 'YOFCEOtKqGqJq5j',
+                authSecret: 'TsAwCNmAndT5kte'
+            },
+			etc: {
+            	debug: true,
+                webrtc: {
+                    answerTimeInterval: 30,
+                    dialogTimeInterval: 5,
+                    disconnectTimeInterval: 35,
+                    statsReportTimeInterval: 5
+                }
+            }
+		})
+	},
 	devServer: {
     	hot: true,
 		filename: 'bundle.js',

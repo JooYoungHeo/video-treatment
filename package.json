@@ -4,10 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build:server": "./node_modules/babel-cli/bin/babel.js server --out-dir build",
+    "build:server": "./node_modules/babel-cli/bin/babel.js backend --out-dir build",
     "build:front": "./node_modules/.bin/webpack",
-    "start": "NODE_ENV=production node ./build/main.js",
-    "dev": "NODE_ENV=development node ./build/main.js"
+    "start": "NODE_ENV=production node ./build/server/main.js",
+    "dev": "NODE_ENV=development node ./build/server/main.js"
   },
   "dependencies": {
     "express": "^4.16.4",
