@@ -1,9 +1,18 @@
-import express from 'express';
+// import express from 'express';
+//
+// const router = express.Router();
+//
+// router.get('/', (req, res) => {
+//     res.send('index');
+// });
+//
+// export default router;
 
-const router = express.Router();
+import Router from 'koa-router';
+import appointment from './appointment';
 
-router.get('/', (req, res) => {
-    res.send('index');
-});
+const api = new Router();
 
-export default router;
+api.use('/appointments', appointment.routes());
+
+export default api;

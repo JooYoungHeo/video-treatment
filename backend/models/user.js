@@ -16,7 +16,7 @@ import {Options, Attributes} from 'sequelize-decorators';
 })
 class User extends Sequelize.Model {
     static associate(models) {
-        this.hasMany(models.Appointment, {foreignKey: 'user_id', as: 'appointments'});
+        this.hasMany(models.Appointment, {foreignKey: 'userId', as: 'appointments'});
     }
 }
 

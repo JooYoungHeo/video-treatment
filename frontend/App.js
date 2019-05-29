@@ -65,6 +65,7 @@ export default class App extends React.Component {
     render() {
         return (
             <div>
+                <h1>Holy shit</h1>
                 <button onClick={this.clickLogin}>로그인</button>
             </div>
         )
