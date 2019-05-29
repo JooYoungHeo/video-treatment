@@ -13,6 +13,10 @@ fs.readdirSync(__dirname)
         db[model.name] = model;
     });
 
+Object.values(db)
+    .filter(model => typeof model.associate === 'function')
+    .forEach(model => model.associate(db));
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

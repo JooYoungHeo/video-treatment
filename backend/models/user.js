@@ -15,7 +15,9 @@ import {Options, Attributes} from 'sequelize-decorators';
     deviceOs: {type: Sequelize.ENUM('Android', 'Ios', 'Etc'), allowNull: false, field: 'device_os'}
 })
 class User extends Sequelize.Model {
-    static associate(models) {}
+    static associate(models) {
+        this.hasMany(models.Appointment, {foreignKey: 'user_id', as: 'appointments'});
+    }
 }
 
 module.exports = User;
