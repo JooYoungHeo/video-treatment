@@ -25,14 +25,16 @@ export default class AppointmentList extends React.Component {
     render() {
         return (
             <div>
-                <h5><Badge variant="secondary">예약 리스트</Badge></h5>
-                <ListGroup>
-                    {this.state.appointments.map((item, i) => (
-                        <ListGroup.Item key={i}>
-                            <strong>{i+1} : {item.user.name}</strong> <span className="small-text">({item.date})</span>
-                        </ListGroup.Item>
-                    ))}
-                </ListGroup>
+                <div className="appointment-list">
+                    <h5><Badge variant="secondary">예약 리스트</Badge></h5>
+                    <ListGroup>
+                        {this.state.appointments.map((item, i) => (
+                            <ListGroup.Item key={i}>
+                                <strong>{i+1} : {item.user.name}</strong> <span className="small-text">({item.date})</span>
+                            </ListGroup.Item>
+                        ))}
+                    </ListGroup>
+                </div>
             </div>
         )
     }

@@ -59,4 +59,40 @@ function qbUpdateUser(qbId, username, room) {
     });
 }
 
-export {getUui, createSession, qbLogin, qbCreateUser, qbUpdateUser};
+function fillMedia() {
+    return new Promise(resolve => {
+        navigator.mediaDevices.getUserMedia({
+            audio: true, video: true
+        }).then(stream => {
+            resolve(stream);
+        }).catch(err => {
+            resolve(null, err);
+        });
+    });
+}
+
+function showMediaDevices(kind) {
+    return new Promise((resolve, reject) => {
+        QB.webrtc.getMediaDevices(kind).then(devices => {
+            resolve(devices);
+        }).catch(err => {
+            reject(err);
+        });
+    });
+}
+
+function createRTCSession(callees){
+    return QB.webrtc.createNewSession(callees, QB.webrtc.CallType.VIDEO, null, {bandwidth: ''});
+}
+
+function getLocalMedia(session, params) {
+    return new Promise((resolve, reject) => {
+        session.getUserMedia(params, (err, stream) => {
+            if (err || !stream.getAudioTracks().length || !stream.getVideoTracks().length) reject(err);
+            else resolve();
+        });
+    });
+}
+
+export {getUui, createSession, qbLogin, qbCreateUser, qbUpdateUser,
+    fillMedia, showMediaDevices, createRTCSession, getLocalMedia};

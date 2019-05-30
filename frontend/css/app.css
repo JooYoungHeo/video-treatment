@@ -1,5 +1,11 @@
-body{width:100%}
+.container{width:100%;margin-top:50px;}
+.container .left-side{width:25%}
+.container .center-side{width:50%}
+.container .right-side{width:25%}
 
 .join-state{margin-left:5px;}
-.left-bar{width: 250px;margin-top:20px;margin-left:20px;}
-.left-bar .small-text{font-size:10px;}
+
+.appointment-list .small-text{font-size:10px;}
+
+.main-screen{min-height:300px;}
+.qb-video{padding:0 0 35% 0;background:#bfbfbf;}
