@@ -46,11 +46,14 @@ export default class VideoScreen extends React.Component {
     render() {
         return (
             <div>
-                <div className="qb-video">
+                <div className="qb-video-remote">
+                    <video id="remoteVideo" className="qb-video_source" autoPlay playsinline/>
+                </div>
+                <div className="qb-video-local">
+                    <Button variant="warning" onClick={this.beforeCall}>do something</Button>
                     <video id="localVideo" className="qb-video_source" autoPlay playsinline/>
                 </div>
                 <br/>
-                <Button variant="warning" onClick={this.beforeCall}>do something</Button>
             </div>
         )
     }
