@@ -11,6 +11,7 @@ import {Options, Attributes} from 'sequelize-decorators';
 })
 @Attributes({
     id: {type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: Sequelize.STRING(32), allowNull: false},
     quickbloxId: {type: Sequelize.STRING(64), allowNull: false, field: 'quickblox_id'},
     deviceOs: {type: Sequelize.ENUM('Android', 'Ios', 'Etc'), allowNull: false, field: 'device_os'}
 })

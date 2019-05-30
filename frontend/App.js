@@ -1,5 +1,7 @@
 import React from 'react';
 import Config from 'Config';
+import {AppointmentList} from './components';
+import './css/app.css';
 
 export default class App extends React.Component {
 
@@ -64,9 +66,8 @@ export default class App extends React.Component {
 
     render() {
         return (
-            <div>
-                <h1>Holy shit</h1>
-                <button onClick={this.clickLogin}>로그인</button>
+            <div className="left-bar">
+                <AppointmentList/>
             </div>
         )
     }

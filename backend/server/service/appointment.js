@@ -17,11 +17,13 @@ class AppointmentService {
                 include: [{
                     model: models.User,
                     as: 'user',
-                    attributes: ['id', 'quickbloxId', 'deviceOs']
-                }]
+                    attributes: ['id', 'name', 'quickbloxId', 'deviceOs']
+                }],
+                order: [['date', 'asc']]
             });
 
             return appointments.map(item => {
+                item = item.get({plain: true});
                 item.date = moment(item.date).format('YYYY-MM-DD HH:mm:ss');
                 return item;
             });
