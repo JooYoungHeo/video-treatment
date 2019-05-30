@@ -59,6 +59,18 @@ function qbUpdateUser(qbId, username, room) {
     });
 }
 
+function chatConnect(internalId, appId, password) {
+    return new Promise((resolve, reject) => {
+        QB.chat.connect({
+            jid: QB.chat.helpers.getUserJid(internalId, appId),
+            password: password
+        }, err => {
+            if (err) reject(err);
+            else resolve();
+        });
+    });
+}
+
 function fillMedia() {
     return new Promise(resolve => {
         navigator.mediaDevices.getUserMedia({
@@ -94,5 +106,31 @@ function getLocalMedia(session, params) {
     });
 }
 
+function onCall(session) {
+    return new Promise((resolve, reject) => {
+        session.call({}, () => {
+            if (!window.navigator.onLine) reject();
+            else resolve();
+        });
+    });
+}
+
+function qbPush(sender, receiver) {
+    return new Promise((resolve, reject) => {
+        let params = {
+            notification_type: 'push',
+            user: {ids: receiver},
+            environment: 'development',
+            message: QB.pushnotifications.base64Encode(`${sender} is calling`)
+        };
+
+        QB.pushnotifications.events.create(params, err => {
+            if (err) reject(err);
+            else resolve();
+        });
+    });
+}
+
 export {getUui, createSession, qbLogin, qbCreateUser, qbUpdateUser,
-    fillMedia, showMediaDevices, createRTCSession, getLocalMedia};
+    chatConnect, fillMedia, showMediaDevices, createRTCSession, getLocalMedia,
+    onCall, qbPush};

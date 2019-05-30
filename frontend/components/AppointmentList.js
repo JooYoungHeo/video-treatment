@@ -13,6 +13,7 @@ export default class AppointmentList extends React.Component {
 
         this.apiInterval = null;
         this.getAppointments = this.getAppointments.bind(this);
+        this.onClickReceiver = this.onClickReceiver.bind(this);
     }
 
     componentDidMount() {
@@ -35,6 +36,10 @@ export default class AppointmentList extends React.Component {
         });
     }
 
+    onClickReceiver(qbId, name) {
+        if (typeof this.props.onClickReceiver === 'function') this.props.onClickReceiver(qbId, name);
+    }
+
     render() {
         return (
             <div>
@@ -49,7 +54,7 @@ export default class AppointmentList extends React.Component {
                             let variant = status === 'None'? 'info': status === 'Ready'? 'danger': 'success';
 
                             return (
-                                <ListGroup.Item variant={variant} key={i}>
+                                <ListGroup.Item variant={variant} key={i} onClick={() => this.onClickReceiver(item.user.qbId, item.user.name)}>
                                     <strong>{item.user.name}</strong> <span className="small-text">({item.date})</span>
                                 </ListGroup.Item>
                             )

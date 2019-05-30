@@ -1,7 +1,7 @@
 import React from 'react';
 import Config from 'Config';
 import axios from 'axios';
-import {createSession, qbLogin, qbCreateUser, qbUpdateUser, fillMedia, showMediaDevices} from './qbHelpers';
+import {createSession, qbLogin, qbCreateUser, qbUpdateUser, chatConnect, fillMedia, showMediaDevices} from './qbHelpers';
 import {Table, InputGroup, FormControl, Button, Badge} from 'react-bootstrap';
 import {VideoScreen} from './components';
 import './css/app.css';
@@ -46,10 +46,13 @@ export default class App extends React.Component {
                 this.serviceLogin(state)
             ]);
 
+            await chatConnect(user.id, Config.creds.appId, state.password);
+
             this.setState({nameFlag: false, joinFlag: true, qbUser: user});
 
             await this.getMedia();
         } catch (e) {
+            console.warn('on service error', e);
             this.setState({nameFlag: true, joinFlag: false, qbUser: null, id: '', password: '', username: ''});
         }
     }
@@ -68,7 +71,7 @@ export default class App extends React.Component {
 
             return user;
         } catch (e) {
-            this.setState({nameFlag: true, joinFlag: false, qbUser: null});
+            throw e;
         }
     }
 
@@ -101,7 +104,7 @@ export default class App extends React.Component {
 
             if (stream) stream.getTracks().forEach(track => {track.stop()});
 
-            console.log('get media done');
+            console.info('get media done');
         } catch (e) {
             console.warn('get media error', e);
         }
@@ -136,7 +139,7 @@ export default class App extends React.Component {
                                 <Badge variant={this.state.joinFlag? 'success':'danger'} className="join-state">{this.state.joinFlag? '연결됨':'연결안됨'}</Badge>
                             </td>
                             <td className="right-side">
-                                <VideoScreen deviceInfo={this.state.deviceInfo}/>
+                                <VideoScreen qbUser={this.state.qbUser} deviceInfo={this.state.deviceInfo}/>
                             </td>
                         </tr>
                     </tbody>
