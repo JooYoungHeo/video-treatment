@@ -1,3 +1,4 @@
 import AppointmentService from './appointment';
+import UserService from './user';
 
-export {AppointmentService};
+export {AppointmentService, UserService};

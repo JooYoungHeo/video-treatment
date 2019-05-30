@@ -1,3 +1,4 @@
 import AppointmentController from './appointment';
+import UserController from './user';
 
-export {AppointmentController};
+export {AppointmentController, UserController};

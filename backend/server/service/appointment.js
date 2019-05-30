@@ -9,7 +9,7 @@ class AppointmentService {
     async getAppointments(doctorId) {
         try {
             let appointments = await models.Appointment.findAll({
-                attributes: ['id', 'date'],
+                attributes: ['id', 'date', 'status'],
                 where: {
                     isActive: true,
                     doctorId: doctorId
@@ -17,7 +17,7 @@ class AppointmentService {
                 include: [{
                     model: models.User,
                     as: 'user',
-                    attributes: ['id', 'name', 'quickbloxId', 'deviceOs']
+                    attributes: ['id', 'name', 'qbId', 'deviceOs']
                 }],
                 order: [['date', 'asc']]
             });

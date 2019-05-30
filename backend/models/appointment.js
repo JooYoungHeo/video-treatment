@@ -12,6 +12,7 @@ import {Options, Attributes} from 'sequelize-decorators';
 @Attributes({
     id: {type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true},
     date: {type: Sequelize.DATE, allowNull: false},
+    status: {type: Sequelize.ENUM('None', 'Ready', 'Finish'), allowNull: false, defaultValue: 'None'},
     doctorId: {type: Sequelize.INTEGER, allowNull: false, field: 'doctor_id'},
     isActive: {type: Sequelize.BOOLEAN, allowNull: false, defaultValue: true, field: 'active'},
     userId: {type: Sequelize.INTEGER, allowNull: false, field: 'user_id', references: {

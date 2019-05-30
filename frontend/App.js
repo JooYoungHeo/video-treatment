@@ -1,5 +1,6 @@
 import React from 'react';
 import Config from 'Config';
+import axios from 'axios';
 import {createSession, qbLogin, qbCreateUser, qbUpdateUser, fillMedia, showMediaDevices} from './qbHelpers';
 import {Table, InputGroup, FormControl, Button, Badge} from 'react-bootstrap';
 import {VideoScreen} from './components';
@@ -24,7 +25,9 @@ export default class App extends React.Component {
         };
 
         this.changeName = this.changeName.bind(this);
+        this.onService = this.onService.bind(this);
         this.qbJoin = this.qbJoin.bind(this);
+        this.serviceLogin = this.serviceLogin.bind(this);
         this.getMedia = this.getMedia.bind(this);
     }
 
@@ -34,11 +37,24 @@ export default class App extends React.Component {
         this.setState({[field]: e.target.value});
     }
 
-    async qbJoin() {
-
-        this.setState({nameFlag: false});
+    async onService() {
         let state = this.state;
 
+        try {
+            let [user] = await Promise.all([
+                this.qbJoin(state),
+                this.serviceLogin(state)
+            ]);
+
+            this.setState({nameFlag: false, joinFlag: true, qbUser: user});
+
+            await this.getMedia();
+        } catch (e) {
+            this.setState({nameFlag: true, joinFlag: false, qbUser: null, id: '', password: '', username: ''});
+        }
+    }
+
+    async qbJoin(state) {
         try {
             await createSession();
             let user = await qbLogin(state.id, state.password);
@@ -50,12 +66,24 @@ export default class App extends React.Component {
                 user = await qbUpdateUser(user.id, state.username, state.room);
             }
 
-            this.setState({joinFlag: true, qbUser: user});
-
-            await this.getMedia();
+            return user;
         } catch (e) {
             this.setState({nameFlag: true, joinFlag: false, qbUser: null});
         }
+    }
+
+    serviceLogin(state) {
+        return new Promise((resolve, reject) => {
+            axios.post('/api/v1/users/login', {
+                qbId: state.id,
+                qbPassword: state.password,
+                username: state.username
+            }).then(() => {
+                resolve();
+            }).catch(err => {
+                reject(err);
+            });
+        });
     }
 
     async getMedia() {
@@ -104,7 +132,7 @@ export default class App extends React.Component {
                                     </InputGroup.Prepend>
                                     <FormControl aria-describedby="inputGroup-sizing-sm" value={this.state.username} onChange={e => this.changeName(e, 'username')}/>
                                 </InputGroup>
-                                <Button variant="primary" onClick={this.qbJoin} disabled={this.state.joinFlag}>QB 연결</Button>
+                                <Button variant="primary" onClick={this.onService} disabled={this.state.joinFlag}>QB 연결</Button>
                                 <Badge variant={this.state.joinFlag? 'success':'danger'} className="join-state">{this.state.joinFlag? '연결됨':'연결안됨'}</Badge>
                             </td>
                             <td className="right-side">

@@ -12,3 +12,7 @@
 #localVideo{width:150px;height:150px;float:right;background:#bfbfbf}
 
 .appointment-list .small-text{font-size:10px}
+.appointment-list .status{font-size:13px}
+.appointment-list .none{color:#b2ebf5}
+.appointment-list .ready{margin-left:10px;color:#ffa7a7}
+.appointment-list .finish{margin-left:10px;color:#b7f0b1}
