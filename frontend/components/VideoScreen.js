@@ -1,6 +1,7 @@
 import React from 'react';
-import {Button} from 'react-bootstrap';
+import {Button, Table} from 'react-bootstrap';
 import {createRTCSession, getLocalMedia} from '../qbHelpers';
+import AppointmentList from './AppointmentList';
 
 export default class VideoScreen extends React.Component {
 
@@ -46,14 +47,24 @@ export default class VideoScreen extends React.Component {
     render() {
         return (
             <div>
-                <div className="qb-video-remote">
-                    <video id="remoteVideo" className="qb-video_source" autoPlay playsinline/>
-                </div>
-                <div className="qb-video-local">
-                    <Button variant="warning" onClick={this.beforeCall}>do something</Button>
-                    <video id="localVideo" className="qb-video_source" autoPlay playsinline/>
-                </div>
-                <br/>
+                <Table borderless={true}>
+                    <tbody>
+                        <tr>
+                            <td className="video-section">
+                                <div className="qb-video-remote">
+                                    <video id="remoteVideo" className="qb-video_source" autoPlay playsinline/>
+                                </div>
+                                <div className="qb-video-local">
+                                    <Button variant="warning" onClick={this.beforeCall}>do something</Button>
+                                    <video id="localVideo" className="qb-video_source" autoPlay playsinline/>
+                                </div>
+                            </td>
+                            <td className="appointment-section">
+                                <AppointmentList/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </Table>
             </div>
         )
     }

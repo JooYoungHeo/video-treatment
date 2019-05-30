@@ -1,12 +1,14 @@
 .container{width:100%;margin-top:50px}
 .container .left-side{width:25%}
-.container .center-side{width:50%}
-.container .right-side{width:25%}
+.container .center-side{width:75%}
 
 .join-state{margin-left:5px}
 
-.appointment-list .small-text{font-size:10px}
+.video-section{width:67%}
+.appointment-section{width:33%}
 
-#remoteVideo{height:350px;background:#bfbfbf}
+#remoteVideo{width:100%;height:350px;background:#bfbfbf}
 .qb-video-local{margin-top:20px}
 #localVideo{width:150px;height:150px;float:right;background:#bfbfbf}
+
+.appointment-list .small-text{font-size:10px}

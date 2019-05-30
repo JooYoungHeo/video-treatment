@@ -2,7 +2,7 @@ import React from 'react';
 import Config from 'Config';
 import {createSession, qbLogin, qbCreateUser, qbUpdateUser, fillMedia, showMediaDevices} from './qbHelpers';
 import {Table, InputGroup, FormControl, Button, Badge} from 'react-bootstrap';
-import {AppointmentList, VideoScreen} from './components';
+import {VideoScreen} from './components';
 import './css/app.css';
 
 export default class App extends React.Component {
@@ -107,16 +107,8 @@ export default class App extends React.Component {
                                 <Button variant="primary" onClick={this.qbJoin} disabled={this.state.joinFlag}>QB 연결</Button>
                                 <Badge variant={this.state.joinFlag? 'success':'danger'} className="join-state">{this.state.joinFlag? '연결됨':'연결안됨'}</Badge>
                             </td>
-                            <td rowSpan={2} className="center-side">
+                            <td className="right-side">
                                 <VideoScreen deviceInfo={this.state.deviceInfo}/>
-                            </td>
-                            <td rowSpan={2} className="right-side">
-                                <span>Fuck</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td className="left-side">
-                                <AppointmentList/>
                             </td>
                         </tr>
                     </tbody>
