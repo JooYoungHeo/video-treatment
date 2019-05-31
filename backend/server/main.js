@@ -37,10 +37,6 @@ app.use(serve(__dirname + '/../../public'));
 app.use(koaBody());
 app.use(router.routes()).use(router.allowedMethods());
 
-// app.listen(port, () => {
-//     console.log(`server on port #${port}`);
-// });
-
 let serverCallback = app.callback();
 let httpsServer = https.createServer(options, serverCallback);
 
