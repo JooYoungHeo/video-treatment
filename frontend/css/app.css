@@ -21,3 +21,7 @@
 .appointment-list .none{color:#b2ebf5}
 .appointment-list .ready{margin-left:10px;color:#ffa7a7}
 .appointment-list .finish{margin-left:10px;color:#b7f0b1}
+
+.modal-income-call{text-align:center}
+.modal-income-call .decline{margin-right:10px}
+.modal-income-call .accept{margin-left:10px}

@@ -2,6 +2,7 @@ import React from 'react';
 import {Button, Table} from 'react-bootstrap';
 import {createRTCSession, getLocalMedia, onCall, qbPush} from '../qbHelpers';
 import AppointmentList from './AppointmentList';
+import {IncomeCall} from './modals';
 
 export default class VideoScreen extends React.Component {
 
@@ -16,9 +17,12 @@ export default class VideoScreen extends React.Component {
             currentSession: null
         };
 
+        this.addQuickbloxEvent();
+
         this.getLocalStream = this.getLocalStream.bind(this);
         this.onClickReceiver = this.onClickReceiver.bind(this);
         this.onCallingEvent = this.onCallingEvent.bind(this);
+        this.onClickDecline = this.onClickDecline.bind(this);
     }
 
     componentWillReceiveProps(props) {
@@ -29,6 +33,20 @@ export default class VideoScreen extends React.Component {
             videoDeviceId: props.deviceInfo[0],
             audioDeviceId: props.deviceInfo[1]
         });
+    }
+
+    addQuickbloxEvent() {
+        QB.webrtc.onCallListener = (session, extension) => {
+            console.group('onCallListener');
+                console.info('Session: ', session);
+                console.info('Extension: ', extension);
+            console.groupEnd();
+
+            this.setState({currentSession: session});
+
+            if (session.state !== QB.webrtc.SessionConnectionState.CLOSED)
+                this.refs.IncomeCall.handleOn();
+        };
     }
 
     async getLocalStream() {
@@ -76,6 +94,16 @@ export default class VideoScreen extends React.Component {
         });
     }
 
+    onClickDecline() {
+        let session = this.state.currentSession;
+
+        if (session) {
+            session.reject({});
+            this.refs.IncomeCall.handleClose();
+            this.setState({currentSession: null, receiverId: null, receiverName: null});
+        }
+    }
+
     render() {
         return (
             <div>
@@ -99,6 +127,7 @@ export default class VideoScreen extends React.Component {
                         </tr>
                     </tbody>
                 </Table>
+                <IncomeCall ref="IncomeCall" onClickDecline={this.onClickDecline}/>
             </div>
         )
     }
