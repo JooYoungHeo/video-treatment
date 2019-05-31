@@ -70,8 +70,8 @@ export default class VideoScreen extends React.Component {
         }
     }
 
-    onClickReceiver(qbId, name) {
-        this.setState({receiverId: qbId, receiverName: name});
+    onClickReceiver(internalId, name) {
+        this.setState({receiverId: internalId, receiverName: name});
     }
 
     onCallingEvent() {

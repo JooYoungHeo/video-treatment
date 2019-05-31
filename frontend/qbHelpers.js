@@ -125,7 +125,7 @@ function qbPush(sender, receiver) {
         };
 
         QB.pushnotifications.events.create(params, err => {
-            if (err) reject(err);
+            if (err) resolve();
             else resolve();
         });
     });

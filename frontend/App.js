@@ -41,10 +41,9 @@ export default class App extends React.Component {
         let state = this.state;
 
         try {
-            let [user] = await Promise.all([
-                this.qbJoin(state),
-                this.serviceLogin(state)
-            ]);
+            let user = await this.qbJoin(state);
+
+            await this.serviceLogin(state, user.id);
 
             await chatConnect(user.id, Config.creds.appId, state.password);
 
@@ -75,9 +74,10 @@ export default class App extends React.Component {
         }
     }
 
-    serviceLogin(state) {
+    serviceLogin(state, internalId) {
         return new Promise((resolve, reject) => {
             axios.post('/api/v1/users/login', {
+                internalId: internalId,
                 qbId: state.id,
                 qbPassword: state.password,
                 username: state.username

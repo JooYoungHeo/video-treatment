@@ -54,7 +54,7 @@ export default class AppointmentList extends React.Component {
                             let variant = status === 'None'? 'info': status === 'Ready'? 'danger': 'success';
 
                             return (
-                                <ListGroup.Item variant={variant} key={i} onClick={() => this.onClickReceiver(item.user.qbId, item.user.name)}>
+                                <ListGroup.Item variant={variant} key={i} onClick={() => this.onClickReceiver(item.user.internalId, item.user.name)}>
                                     <strong>{item.user.name}</strong> <span className="small-text">({item.date})</span>
                                 </ListGroup.Item>
                             )

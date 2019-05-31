@@ -6,7 +6,7 @@ class UserService {
         this.login = this.login.bind(this);
     }
 
-    async login(qbId, qbPassword, username, os) {
+    async login(internalId, qbId, qbPassword, username, os) {
 
         let transaction;
 
@@ -15,9 +15,9 @@ class UserService {
 
             let user = await this._findUser(qbId, qbPassword, transaction);
 
-            if (user) await this._updateUser(user.id, username, transaction);
+            if (user) await this._updateUser(user.id, internalId, username, transaction);
             else {
-                user = await this._createUser(qbId, qbPassword, username, os, transaction);
+                user = await this._createUser(internalId, qbId, qbPassword, username, os, transaction);
                 await this._createAppointment(user.id, transaction);
             }
 
@@ -42,10 +42,11 @@ class UserService {
         }
     }
 
-    async _createUser(qbId, qbPassword, username, os, t) {
+    async _createUser(internalId, qbId, qbPassword, username, os, t) {
         try {
             return await models.User.create({
                 name: username,
+                internalId: internalId,
                 qbId: qbId,
                 qbPassword: qbPassword,
                 deviceOs: os
@@ -57,10 +58,11 @@ class UserService {
         }
     }
 
-    async _updateUser(id, username, t) {
+    async _updateUser(id, internalId, username, t) {
         try {
             return await models.User.update({
-                name: username
+                name: username,
+                internalId: internalId,
             }, {
                 where: {id: id},
                 transaction: t

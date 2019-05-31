@@ -17,7 +17,7 @@ class AppointmentService {
                 include: [{
                     model: models.User,
                     as: 'user',
-                    attributes: ['id', 'name', 'qbId', 'deviceOs']
+                    attributes: ['id', 'name', 'internalId', 'qbId', 'deviceOs']
                 }],
                 order: [['date', 'asc']]
             });
