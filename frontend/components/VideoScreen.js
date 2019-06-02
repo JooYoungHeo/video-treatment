@@ -1,6 +1,7 @@
 import React from 'react';
 import {Button, Table} from 'react-bootstrap';
 import {createRTCSession, getLocalMedia, onCall, qbPush} from '../qbHelpers';
+import {onCallListener} from '../qbEventListener';
 import AppointmentList from './AppointmentList';
 import {IncomeCall} from './modals';
 
@@ -17,7 +18,7 @@ export default class VideoScreen extends React.Component {
             currentSession: null
         };
 
-        this.addQuickbloxEvent();
+        onCallListener(this);
 
         this.getLocalStream = this.getLocalStream.bind(this);
         this.onClickReceiver = this.onClickReceiver.bind(this);
@@ -35,19 +36,19 @@ export default class VideoScreen extends React.Component {
         });
     }
 
-    addQuickbloxEvent() {
-        QB.webrtc.onCallListener = (session, extension) => {
-            console.group('onCallListener');
-                console.info('Session: ', session);
-                console.info('Extension: ', extension);
-            console.groupEnd();
-
-            this.setState({currentSession: session});
-
-            if (session.state !== QB.webrtc.SessionConnectionState.CLOSED)
-                this.refs.IncomeCall.handleOn();
-        };
-    }
+    // addQuickbloxEvent() {
+    //     QB.webrtc.onCallListener = (session, extension) => {
+    //         console.group('onCallListener');
+    //             console.info('Session: ', session);
+    //             console.info('Extension: ', extension);
+    //         console.groupEnd();
+    //
+    //         this.setState({currentSession: session});
+    //
+    //         if (session.state !== QB.webrtc.SessionConnectionState.CLOSED)
+    //             this.refs.IncomeCall.handleOn();
+    //     };
+    // }
 
     async getLocalStream() {
         if (!this.state.videoDeviceId || !this.state.audioDeviceId || !this.state.receiverId) return;
@@ -60,6 +61,8 @@ export default class VideoScreen extends React.Component {
         };
 
         let currentSession = createRTCSession([this.state.receiverId]);
+
+        console.log(currentSession);
 
         this.setState({currentSession: currentSession});
 
