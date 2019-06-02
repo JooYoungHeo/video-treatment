@@ -48,7 +48,7 @@ export default class AppointmentList extends React.Component {
                     <ListGroup>
                         {this.state.appointments.map((item, i) => {
                             let status = item.status.toLowerCase();
-                            let statusText = status === 'none'? '상담전': status === 'ready'? '진료전': '진료중';
+                            let statusText = status === 'none'? '상담전': status === 'pre'? '상담중': status === 'ready'? '진료전': '진료중';
 
                             return (
                                 <ListGroup.Item key={i} onClick={() => this.onClickReceiver(item.user.internalId, item.user.name, status)}>

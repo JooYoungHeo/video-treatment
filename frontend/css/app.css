@@ -23,6 +23,7 @@
 .appointment-list .user-status{width:50px;height:20px;padding-left:9px;padding-top:1px;border-radius:10px;font-size:12px;float:right;font-weight:bold;background-color:#eaeaea}
 .appointment-list .small-text{font-size:10px}
 .appointment-list .none{color:#000000}
+.appointment-list .pre{color:#6B66FF}
 .appointment-list .ready{color:#f29961}
 .appointment-list .ing{color:#ff0000}
 
