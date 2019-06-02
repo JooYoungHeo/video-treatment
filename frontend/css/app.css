@@ -15,10 +15,12 @@
 .inactive{opacity:0.3}
 .appointment-section{width:33%}
 
+.qb-video-remote{position:relative;z-index:1}
 #remoteVideo{width:100%;height:350px;background:#bfbfbf}
-.qb-video-local{margin-top:20px}
-.qb-video-local .calling{margin-left:20px}
-#localVideo{width:150px;height:150px;float:right;background:#bfbfbf}
+.qb-video-local{position:relative;left:-10px;top:-170px;z-index:2}
+.video-btn{margin-top:20px}
+.video-btn .call-btn{margin-left:20px}
+#localVideo{width:150px;height:150px;float:right;background:#bfbfbf;border:1px solid blak}
 
 .appointment-list .user-status{width:50px;height:20px;padding-left:9px;padding-top:1px;border-radius:10px;font-size:12px;float:right;font-weight:bold;background-color:#eaeaea}
 .appointment-list .small-text{font-size:10px}

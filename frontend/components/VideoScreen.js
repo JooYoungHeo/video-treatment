@@ -162,10 +162,12 @@ export default class VideoScreen extends React.Component {
                                     <video id="remoteVideo" className="qb-video_source" autoPlay playsinline/>
                                 </div>
                                 <div className="qb-video-local">
-                                    <Button variant="warning" onClick={this.getLocalStream}>local-stream</Button>
-                                    <Button variant="warning" className="calling" onClick={this.onCallingEvent}>on-call</Button>
-                                    <Button variant="warning" className="calling" onClick={this.onHangUp}>hang-up</Button>
                                     <video id="localVideo" className="qb-video_source" autoPlay playsinline/>
+                                </div>
+                                <div className="video-btn">
+                                    <Button variant="warning" onClick={this.getLocalStream}>local-stream</Button>
+                                    <Button variant="warning" className="call-btn" onClick={this.onCallingEvent}>on-call</Button>
+                                    <Button variant="warning" className="call-btn" onClick={this.onHangUp}>hang-up</Button>
                                 </div>
                             </td>
                             <td className="appointment-section">
