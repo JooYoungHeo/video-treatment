@@ -12,4 +12,53 @@ function onCallListener ($this) {
     };
 }
 
-export {onCallListener};
+function onRejectCallListener() {
+    QB.webrtc.onRejectCallListener = (session, userId, extension) => {
+        console.group('onRejectCallListener');
+            console.info('Session: ' + session);
+            console.info('UserId: ' + userId);
+            console.info('Extension: ' + extension);
+        console.groupEnd();
+    }
+}
+
+function onStopCallListener() {
+    QB.webrtc.onStopCallListener = (session, userId, extension) => {
+        console.group('onRejectCallListener');
+            console.info('Session: ' + session);
+            console.info('UserId: ' + userId);
+            console.info('Extension: ' + extension);
+        console.groupEnd();
+    }
+}
+
+function onAcceptCallListener() {
+    QB.webrtc.onAcceptCallListener = function onAcceptCallListener(session, userId, extension) {
+        console.group('onAcceptCallListener');
+            console.info('UserId: ' + userId);
+            console.info('Session: ' + session);
+            console.info('Extension: ' + extension);
+        console.groupEnd();
+    };
+}
+
+function onRemoteStreamListener($this) {
+    QB.webrtc.onRemoteStreamListener = (session, userId, stream) => {
+        console.group('onAcceptCallListener');
+            console.info('UserId: ' + userId);
+            console.info('Session: ' + session);
+            console.info('Stream: ' + stream);
+        console.groupEnd();
+
+        let state = $this.state.currentSession.connectionStateForUser(userId);
+        let peerConnList = QB.webrtc.PeerConnectionState;
+
+        if (state === peerConnList.DISCONNECTED || state === peerConnList.FAILED || state === peerConnList.CLOSED) return false;
+
+        $this.state.currentSession.peerConnections[userId].stream = stream;
+
+        $this.state.currentSession.attachMediaStream('remoteVideo', stream);
+    }
+}
+
+export {onCallListener, onRejectCallListener, onStopCallListener, onAcceptCallListener, onRemoteStreamListener};
