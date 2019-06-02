@@ -14,6 +14,7 @@ export default class VideoScreen extends React.Component {
             qbUser: null,
             videoDeviceId: null,
             audioDeviceId: null,
+            appointmentId: null,
             receiverId: null,
             receiverName: null,
             receiverStatus: null,
@@ -67,8 +68,8 @@ export default class VideoScreen extends React.Component {
         }
     }
 
-    onClickReceiver(internalId, name, status) {
-        this.setState({receiverId: internalId, receiverName: name, receiverStatus: status});
+    onClickReceiver(appointmentId, internalId, name, status) {
+        this.setState({appointmentId: appointmentId, receiverId: internalId, receiverName: name, receiverStatus: status});
     }
 
     onCallingEvent() {
@@ -83,7 +84,11 @@ export default class VideoScreen extends React.Component {
             return;
         }
 
-        onCall(currentSession, {name: state.qbUser.full_name, staffType: state.staffType}).then(() => {
+        onCall(currentSession, {
+            appointmentId: state.appointmentId,
+            name: state.qbUser.full_name,
+            staffType: state.staffType
+        }).then(() => {
             return qbPush(state.qbUser.full_name, [state.receiverId]);
         }).then(() => {
             console.info('calling success');
