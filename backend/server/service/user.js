@@ -6,7 +6,7 @@ class UserService {
         this.login = this.login.bind(this);
     }
 
-    async login(internalId, qbId, qbPassword, username, os = 'Etc') {
+    async login(internalId, qbId, qbPassword, username, os = 'Etc', type = 'staff') {
 
         let transaction;
 
@@ -18,7 +18,7 @@ class UserService {
             if (user) await this._updateUser(user.id, internalId, username, transaction);
             else {
                 user = await this._createUser(internalId, qbId, qbPassword, username, os, transaction);
-                await this._createAppointment(user.id, transaction);
+                await this._createAppointment(user.id, type, transaction);
             }
 
             await transaction.commit();
@@ -72,7 +72,9 @@ class UserService {
         }
     }
 
-    async _createAppointment(id, t) {
+    async _createAppointment(id, type, t) {
+
+        if (type === 'staff') return;
 
         let date = new Date();
         let random = Math.floor(Math.random() * 60) + 5;
