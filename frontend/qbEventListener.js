@@ -1,3 +1,12 @@
+function onSessionCloseListener ($this) {
+    QB.webrtc.onSessionCloseListener = session => {
+        console.log('onSessionCloseListener: ' , session);
+
+        $this.state.currentSession.detachMediaStream('remoteVideo');
+        $this.state.currentSession.detachMediaStream('localVideo');
+    };
+}
+
 function onCallListener ($this) {
     QB.webrtc.onCallListener = (session, extension) => {
         console.group('onCallListener');
@@ -61,4 +70,4 @@ function onRemoteStreamListener($this) {
     }
 }
 
-export {onCallListener, onRejectCallListener, onStopCallListener, onAcceptCallListener, onRemoteStreamListener};
+export {onSessionCloseListener, onCallListener, onRejectCallListener, onStopCallListener, onAcceptCallListener, onRemoteStreamListener};

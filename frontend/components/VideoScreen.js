@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, Table, Form} from 'react-bootstrap';
 import {createRTCSession, getLocalMedia, onCall, qbPush} from '../qbHelpers';
-import {onCallListener, onRejectCallListener, onStopCallListener, onAcceptCallListener, onRemoteStreamListener} from '../qbEventListener';
+import {onSessionCloseListener, onCallListener, onRejectCallListener, onStopCallListener, onAcceptCallListener, onRemoteStreamListener} from '../qbEventListener';
 import AppointmentList from './AppointmentList';
 import {IncomeCall} from './modals';
 
@@ -21,6 +21,7 @@ export default class VideoScreen extends React.Component {
             currentSession: null
         };
 
+        onSessionCloseListener(this);
         onCallListener(this);
         onRejectCallListener();
         onStopCallListener();
