@@ -1,4 +1,4 @@
-function onCallListener ($this) => {
+function onCallListener ($this) {
     QB.webrtc.onCallListener = (session, extension) => {
         console.group('onCallListener');
             console.info('Session: ' + session);
