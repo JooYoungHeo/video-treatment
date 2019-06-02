@@ -106,9 +106,9 @@ function getLocalMedia(session, params) {
     });
 }
 
-function onCall(session) {
+function onCall(session, extension) {
     return new Promise((resolve, reject) => {
-        session.call({}, () => {
+        session.call(extension, () => {
             if (!window.navigator.onLine) reject();
             else resolve();
         });

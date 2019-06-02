@@ -29,6 +29,7 @@ export default class VideoScreen extends React.Component {
         this.onCallingEvent = this.onCallingEvent.bind(this);
         this.onClickDecline = this.onClickDecline.bind(this);
         this.onClickAccept = this.onClickAccept.bind(this);
+        this.onHangUp = this.onHangUp.bind(this);
     }
 
     componentWillReceiveProps(props) {
@@ -73,7 +74,7 @@ export default class VideoScreen extends React.Component {
 
         let currentSession = state.currentSession;
 
-        onCall(currentSession).then(() => {
+        onCall(currentSession, {name: state.qbUser.full_name}).then(() => {
             return qbPush(state.qbUser.full_name, [state.receiverId]);
         }).then(() => {
             console.info('calling success');
@@ -112,8 +113,13 @@ export default class VideoScreen extends React.Component {
             session.accept({});
         } catch (e) {
             session.stop({});
-            this.setState({currentSession: null});
+            this.setState({currentSession: null, receiverId: null, receiverName: null});
         }
+    }
+
+    onHangUp() {
+        this.state.currentSession.stop({});
+        this.setState({currentSession: null, receiverId: null, receiverName: null});
     }
 
     render() {
@@ -130,6 +136,7 @@ export default class VideoScreen extends React.Component {
                                 <div className="qb-video-local">
                                     <Button variant="warning" onClick={this.getLocalStream}>on local</Button>
                                     <Button variant="warning" className="calling" onClick={this.onCallingEvent}>on call</Button>
+                                    <Button variant="warning" className="calling" onClick={this.onHangUp}>hang-up</Button>
                                     <video id="localVideo" className="qb-video_source" autoPlay playsinline/>
                                 </div>
                             </td>
