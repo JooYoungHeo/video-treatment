@@ -11,7 +11,7 @@ class UserController {
         try {
             let body = ctx.request.body || {};
 
-            ctx.body = await this._userService.login(body.internalId, body.qbId, body.qbPassword, body.username, 'Android');
+            ctx.body = await this._userService.login(body.internalId, body.qbId, body.qbPassword, body.username, body.deviceOs);
         } catch (e) {
             console.log(e);
             ctx.status = 500;

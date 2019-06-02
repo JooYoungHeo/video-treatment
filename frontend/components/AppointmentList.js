@@ -36,8 +36,8 @@ export default class AppointmentList extends React.Component {
         });
     }
 
-    onClickReceiver(qbId, name) {
-        if (typeof this.props.onClickReceiver === 'function') this.props.onClickReceiver(qbId, name);
+    onClickReceiver(qbId, name, status) {
+        if (typeof this.props.onClickReceiver === 'function') this.props.onClickReceiver(qbId, name, status);
     }
 
     render() {
@@ -51,7 +51,7 @@ export default class AppointmentList extends React.Component {
                             let statusText = status === 'none'? '상담전': status === 'ready'? '진료전': '진료중';
 
                             return (
-                                <ListGroup.Item key={i} onClick={() => this.onClickReceiver(item.user.internalId, item.user.name)}>
+                                <ListGroup.Item key={i} onClick={() => this.onClickReceiver(item.user.internalId, item.user.name, status)}>
                                     <p>
                                         <strong>{item.user.name}</strong>
                                         <span className={`user-status ${status}`}>{statusText}</span>

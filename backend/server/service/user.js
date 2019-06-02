@@ -6,7 +6,7 @@ class UserService {
         this.login = this.login.bind(this);
     }
 
-    async login(internalId, qbId, qbPassword, username, os) {
+    async login(internalId, qbId, qbPassword, username, os = 'Etc') {
 
         let transaction;
 

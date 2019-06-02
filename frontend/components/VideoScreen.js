@@ -16,6 +16,7 @@ export default class VideoScreen extends React.Component {
             audioDeviceId: null,
             receiverId: null,
             receiverName: null,
+            receiverStatus: null,
             currentSession: null
         };
 
@@ -66,8 +67,8 @@ export default class VideoScreen extends React.Component {
         }
     }
 
-    onClickReceiver(internalId, name) {
-        this.setState({receiverId: internalId, receiverName: name});
+    onClickReceiver(internalId, name, status) {
+        this.setState({receiverId: internalId, receiverName: name, receiverStatus: status});
     }
 
     onCallingEvent() {
@@ -76,6 +77,11 @@ export default class VideoScreen extends React.Component {
         if (!state.receiverId) return;
 
         let currentSession = state.currentSession;
+
+        if ((state.staffType !== 'aide' || state.receiverStatus !== 'none') && (state.staffType !== 'doctor' || state.receiverStatus !== 'ready')) {
+            alert('잘못된 대상');
+            return;
+        }
 
         onCall(currentSession, {name: state.qbUser.full_name, staffType: state.staffType}).then(() => {
             return qbPush(state.qbUser.full_name, [state.receiverId]);
@@ -96,7 +102,7 @@ export default class VideoScreen extends React.Component {
         if (session) {
             session.reject({});
             this.refs.IncomeCall.handleClose();
-            this.setState({currentSession: null, receiverId: null, receiverName: null});
+            this.setState({currentSession: null, receiverId: null, receiverName: null, receiverStatus: null});
         }
     }
 
@@ -116,13 +122,13 @@ export default class VideoScreen extends React.Component {
             session.accept({});
         } catch (e) {
             session.stop({});
-            this.setState({currentSession: null, receiverId: null, receiverName: null});
+            this.setState({currentSession: null, receiverId: null, receiverName: null, receiverStatus: null});
         }
     }
 
     onHangUp() {
         this.state.currentSession.stop({});
-        this.setState({currentSession: null, receiverId: null, receiverName: null});
+        this.setState({currentSession: null, receiverId: null, receiverName: null, receiverStatus: null});
     }
 
     changeStaffType(e) {
