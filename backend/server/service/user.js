@@ -6,7 +6,7 @@ class UserService {
         this.login = this.login.bind(this);
     }
 
-    async login(internalId, qbId, qbPassword, username, os = 'Etc', type = 'staff') {
+    async login(internalId, qbId, qbPassword, username, os = 'Etc', type = 'aide') {
 
         let transaction;
 
@@ -18,9 +18,11 @@ class UserService {
             if (user) await this._updateUser(user.id, internalId, username, transaction);
             else user = await this._createUser(internalId, qbId, qbPassword, username, os, transaction);
 
-            let appointment = await this._findAppointment(user.id, transaction);
+            if (type !== 'staff') {
+                let appointment = await this._findAppointment(user.id, transaction);
 
-            if (!appointment && type !== 'staff') await this._createAppointment(user.id, transaction);
+                if (!appointment) await this._createAppointment(user.id, transaction);
+            }
 
             await transaction.commit();
 

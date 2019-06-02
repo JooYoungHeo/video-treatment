@@ -80,7 +80,8 @@ export default class App extends React.Component {
                 internalId: internalId,
                 qbId: state.id,
                 qbPassword: state.password,
-                username: state.username
+                username: state.username,
+                type: 'staff'
             }).then(() => {
                 resolve();
             }).catch(err => {

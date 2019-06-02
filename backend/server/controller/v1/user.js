@@ -11,7 +11,7 @@ class UserController {
         try {
             let body = ctx.request.body || {};
 
-            ctx.body = await this._userService.login(body.internalId, body.qbId, body.qbPassword, body.username, body.deviceOs);
+            ctx.body = await this._userService.login(body.internalId, body.qbId, body.qbPassword, body.username, body.deviceOs, body.type);
         } catch (e) {
             ctx.status = 500;
             ctx.body = e.stack;
