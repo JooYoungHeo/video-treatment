@@ -8,8 +8,8 @@
 + https://52.78.64.41/api/v1
 
 #### Api List
-* [로그인](#markdown-header-login)
-* [영상진료 에러](#markdown-header-video-error)
+* [로그인](#login)
+* [영상진료 에러](#video-error)
 
 #### Login
 ```
