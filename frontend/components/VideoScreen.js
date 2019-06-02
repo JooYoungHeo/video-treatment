@@ -28,9 +28,7 @@ export default class VideoScreen extends React.Component {
         this.onClickReceiver = this.onClickReceiver.bind(this);
         this.onCallingEvent = this.onCallingEvent.bind(this);
         this.onClickDecline = this.onClickDecline.bind(this);
-
-        this.checkSession = this.checkSession.bind(this);
-
+        this.onClickAccept = this.onClickAccept.bind(this);
     }
 
     componentWillReceiveProps(props) {
@@ -98,8 +96,24 @@ export default class VideoScreen extends React.Component {
         }
     }
 
-    checkSession() {
-        console.log(this.state.currentSession);
+    async onClickAccept() {
+        this.refs.IncomeCall.handleClose();
+
+        let mediaParams = {
+            audio: {deviceId: this.state.audioDeviceId},
+            video: {deviceId: this.state.videoDeviceId},
+            options: {muted: true, mirror: true},
+            elemId: 'localVideo'
+        };
+        let session = this.state.currentSession;
+
+        try {
+            getLocalMedia(session, mediaParams);
+            session.accept({});
+        } catch (e) {
+            session.stop({});
+            this.setState({currentSession: null});
+        }
     }
 
     render() {
@@ -116,11 +130,6 @@ export default class VideoScreen extends React.Component {
                                 <div className="qb-video-local">
                                     <Button variant="warning" onClick={this.getLocalStream}>on local</Button>
                                     <Button variant="warning" className="calling" onClick={this.onCallingEvent}>on call</Button>
-
-
-                                    <Button variant="warning" className="calling" onClick={this.checkSession}>check session</Button>
-
-
                                     <video id="localVideo" className="qb-video_source" autoPlay playsinline/>
                                 </div>
                             </td>
@@ -130,7 +139,7 @@ export default class VideoScreen extends React.Component {
                         </tr>
                     </tbody>
                 </Table>
-                <IncomeCall ref="IncomeCall" onClickDecline={this.onClickDecline}/>
+                <IncomeCall ref="IncomeCall" onClickDecline={this.onClickDecline} onClickAccept={this.onClickAccept}/>
             </div>
         )
     }

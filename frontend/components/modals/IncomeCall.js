@@ -10,12 +10,17 @@ export default class IncomeCall extends React.Component {
         };
 
         this.onClickDecline = this.onClickDecline.bind(this);
+        this.onClickAccept = this.onClickAccept.bind(this);
         this.handleOn = this.handleOn.bind(this);
         this.handleClose = this.handleClose.bind(this);
     }
 
     onClickDecline() {
         if (typeof this.props.onClickDecline === 'function') this.props.onClickDecline();
+    }
+
+    onClickAccept() {
+        if (typeof this.props.onClickAccept === 'function') this.props.onClickAccept();
     }
 
     handleOn() {
@@ -36,7 +41,7 @@ export default class IncomeCall extends React.Component {
                     <Button className="decline" variant="danger" onClick={this.onClickDecline}>
                         Decline
                     </Button>
-                    <Button className="accept" variant="primary" onClick={this.handleClose}>
+                    <Button className="accept" variant="primary" onClick={this.onClickAccept}>
                         Accept
                     </Button>
                 </Modal.Body>
