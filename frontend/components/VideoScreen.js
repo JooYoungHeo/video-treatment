@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Table} from 'react-bootstrap';
+import {Button, Table, Form} from 'react-bootstrap';
 import {createRTCSession, getLocalMedia, onCall, qbPush} from '../qbHelpers';
 import {onCallListener, onRejectCallListener, onStopCallListener, onAcceptCallListener, onRemoteStreamListener} from '../qbEventListener';
 import AppointmentList from './AppointmentList';
@@ -10,6 +10,7 @@ export default class VideoScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            staffType: 'aide',
             qbUser: null,
             videoDeviceId: null,
             audioDeviceId: null,
@@ -30,9 +31,11 @@ export default class VideoScreen extends React.Component {
         this.onClickDecline = this.onClickDecline.bind(this);
         this.onClickAccept = this.onClickAccept.bind(this);
         this.onHangUp = this.onHangUp.bind(this);
+        this.changeStaffType = this.changeStaffType.bind(this);
     }
 
     componentWillReceiveProps(props) {
+
         if (!props.qbUser || !props.deviceInfo) return;
 
         this.setState({
@@ -74,7 +77,7 @@ export default class VideoScreen extends React.Component {
 
         let currentSession = state.currentSession;
 
-        onCall(currentSession, {name: state.qbUser.full_name}).then(() => {
+        onCall(currentSession, {name: state.qbUser.full_name, staffType: state.staffType}).then(() => {
             return qbPush(state.qbUser.full_name, [state.receiverId]);
         }).then(() => {
             console.info('calling success');
@@ -122,20 +125,33 @@ export default class VideoScreen extends React.Component {
         this.setState({currentSession: null, receiverId: null, receiverName: null});
     }
 
+    changeStaffType(e) {
+        this.setState({staffType: e.target.value});
+    }
+
     render() {
+        let extraClass = this.state.qbUser? '': 'inactive';
         return (
             <div>
-                <p className="target">target : <span className="target-text">{this.state.receiverName? this.state.receiverName: '없음'}</span></p>
+                <p className={`target ${extraClass}`}>
+                    선택된 환자 : <span className="target-text">{this.state.receiverName? this.state.receiverName: '없음'}</span>
+                    <span className="staff-desc">/</span>
+                    <span className="staff-desc">접속정보 : </span>
+                    <input className="staff-desc staff-radio" type="radio" value="aide" checked={this.state.staffType==='aide'} onChange={this.changeStaffType}/>
+                    <span className={this.state.staffType==='aide'? 'target-text': ''}>조무사</span>
+                    <input className="staff-desc staff-radio" type="radio" value="doctor" checked={this.state.staffType==='doctor'} onChange={this.changeStaffType}/>
+                    <span className={this.state.staffType==='doctor'? 'target-text': ''}>의사</span>
+                </p>
                 <Table className="main-section" borderless={true}>
                     <tbody>
                         <tr>
-                            <td className="video-section">
+                            <td className={`video-section ${extraClass}`}>
                                 <div className="qb-video-remote">
                                     <video id="remoteVideo" className="qb-video_source" autoPlay playsinline/>
                                 </div>
                                 <div className="qb-video-local">
-                                    <Button variant="warning" onClick={this.getLocalStream}>on local</Button>
-                                    <Button variant="warning" className="calling" onClick={this.onCallingEvent}>on call</Button>
+                                    <Button variant="warning" onClick={this.getLocalStream}>local-stream</Button>
+                                    <Button variant="warning" className="calling" onClick={this.onCallingEvent}>on-call</Button>
                                     <Button variant="warning" className="calling" onClick={this.onHangUp}>hang-up</Button>
                                     <video id="localVideo" className="qb-video_source" autoPlay playsinline/>
                                 </div>

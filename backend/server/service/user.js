@@ -8,10 +8,6 @@ class UserService {
 
     async login(internalId, qbId, qbPassword, username, os) {
 
-        qbId = qbId.toLowerCase();
-        qbPassword = qbPassword.toLowerCase();
-        username = username.toLowerCase();
-
         let transaction;
 
         try {

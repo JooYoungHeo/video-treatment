@@ -18,7 +18,7 @@ export default class App extends React.Component {
             id: '',
             password: '',
             username: '',
-            room: 'MCU',
+            room: 'ZUM',
             joinFlag: false,
             qbUser: null,
             deviceInfo: null
