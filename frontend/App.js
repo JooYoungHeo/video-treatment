@@ -34,7 +34,7 @@ export default class App extends React.Component {
     changeName(e, field) {
         if (!this.state.nameFlag) return;
 
-        this.setState({[field]: e.target.value, room: e.target.value});
+        this.setState({[field]: e.target.value});
     }
 
     async onService() {
