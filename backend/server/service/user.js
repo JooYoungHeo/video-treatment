@@ -10,7 +10,7 @@ class UserService {
 
         qbId = qbId.toLowerCase();
         qbPassword = qbPassword.toLowerCase();
-        username = qbPassword.toLowerCase();
+        username = username.toLowerCase();
 
         let transaction;
 
