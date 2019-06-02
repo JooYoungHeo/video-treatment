@@ -16,11 +16,11 @@
 .qb-video-local .calling{margin-left:20px}
 #localVideo{width:150px;height:150px;float:right;background:#bfbfbf}
 
+.appointment-list .user-status{width:50px;height:20px;padding-left:9px;padding-top:1px;border-radius:10px;font-size:12px;float:right;font-weight:bold;background-color:#eaeaea}
 .appointment-list .small-text{font-size:10px}
-.appointment-list .status{font-size:13px}
-.appointment-list .none{color:#b2ebf5}
-.appointment-list .ready{margin-left:10px;color:#ffa7a7}
-.appointment-list .finish{margin-left:10px;color:#b7f0b1}
+.appointment-list .none{color:#000000}
+.appointment-list .ready{color:#f29961}
+.appointment-list .ing{color:#ff0000}
 
 .modal-income-call{text-align:center}
 .modal-income-call .decline{margin-right:10px}

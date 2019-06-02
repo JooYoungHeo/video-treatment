@@ -45,17 +45,18 @@ export default class AppointmentList extends React.Component {
             <div>
                 <div className="appointment-list">
                     <h5><Badge variant="secondary">예약 리스트</Badge></h5>
-                    <p className="status">
-                        <span className="none">■</span>상담전<span className="ready">■</span>대기<span className="finish">■</span>완료
-                    </p>
                     <ListGroup>
                         {this.state.appointments.map((item, i) => {
-                            let status = item.status;
-                            let variant = status === 'None'? 'info': status === 'Ready'? 'danger': 'success';
+                            let status = item.status.toLowerCase();
+                            let statusText = status === 'none'? '상담전': status === 'ready'? '진료전': '진료중';
 
                             return (
-                                <ListGroup.Item variant={variant} key={i} onClick={() => this.onClickReceiver(item.user.internalId, item.user.name)}>
-                                    <strong>{item.user.name}</strong> <span className="small-text">({item.date})</span>
+                                <ListGroup.Item key={i} onClick={() => this.onClickReceiver(item.user.internalId, item.user.name)}>
+                                    <p>
+                                        <strong>{item.user.name}</strong>
+                                        <span className={`user-status ${status}`}>{statusText}</span>
+                                    </p>
+                                    <span className="small-text">({item.date})</span>
                                 </ListGroup.Item>
                             )
                         })}

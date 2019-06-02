@@ -12,7 +12,10 @@ class AppointmentService {
                 attributes: ['id', 'date', 'status'],
                 where: {
                     isActive: true,
-                    doctorId: doctorId
+                    doctorId: doctorId,
+                    status: {
+                        [models.Sequelize.Op.not]: 'Finish'
+                    }
                 },
                 include: [{
                     model: models.User,
