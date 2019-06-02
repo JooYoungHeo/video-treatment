@@ -16,10 +16,11 @@ class UserService {
             let user = await this._findUser(qbId, qbPassword, transaction);
 
             if (user) await this._updateUser(user.id, internalId, username, transaction);
-            else {
-                user = await this._createUser(internalId, qbId, qbPassword, username, os, transaction);
-                await this._createAppointment(user.id, type, transaction);
-            }
+            else user = await this._createUser(internalId, qbId, qbPassword, username, os, transaction);
+
+            let appointment = await this._findAppointment(user.id, transaction);
+
+            if (!appointment && type !== 'staff') await this._createAppointment(user.id, transaction);
 
             await transaction.commit();
 
@@ -72,10 +73,24 @@ class UserService {
         }
     }
 
-    async _createAppointment(id, type, t) {
+    async _findAppointment(userId, t) {
+        try {
+            return await models.Appointment.findOne({
+                attributes: ['id'],
+                where: {
+                    userId: userId,
+                    status: {
+                        [models.Sequelize.Op.not]: 'Finish'
+                    }
+                },
+                transaction: t
+            });
+        } catch (e) {
+            throw e;
+        }
+    }
 
-        if (type === 'staff') return;
-
+    async _createAppointment(userId, t) {
         let date = new Date();
         let random = Math.floor(Math.random() * 60) + 5;
         date.setHours(date.getHours() + random);
@@ -86,7 +101,7 @@ class UserService {
                 status: 'None',
                 doctorId: 1,
                 active: true,
-                userId: id
+                userId: userId
             }, {
                 transaction: t
             });
