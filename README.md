@@ -8,10 +8,10 @@
 + https://52.78.64.41/api/v1
 
 #### Api List
-* [로그인](#markdown-header-로그인)
-* [영상진료 에러](#markdown-header-영상진료에러)
+* [로그인](#markdown-header-login)
+* [영상진료 에러](#markdown-header-video-error)
 
-#### 로그인
+#### Login
 ```
 유저 로그인
 ---------
@@ -36,7 +36,7 @@ POST /users/login
 }
 ```
 
-#### 영상진료에러
+#### Video Error
 ```
 영상진료 비정상 종료
 ---------
