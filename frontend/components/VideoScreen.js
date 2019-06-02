@@ -108,7 +108,7 @@ export default class VideoScreen extends React.Component {
         let session = this.state.currentSession;
 
         try {
-            getLocalMedia(session, mediaParams);
+            await getLocalMedia(session, mediaParams);
             session.accept({});
         } catch (e) {
             session.stop({});
