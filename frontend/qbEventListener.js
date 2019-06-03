@@ -1,3 +1,5 @@
+import {updateAppointment} from './qbHelpers';
+
 function onSessionCloseListener ($this) {
     QB.webrtc.onSessionCloseListener = session => {
         console.group('onSessionCloseListener');
@@ -43,13 +45,19 @@ function onStopCallListener() {
     }
 }
 
-function onAcceptCallListener() {
-    QB.webrtc.onAcceptCallListener = function onAcceptCallListener(session, userId, extension) {
+function onAcceptCallListener($this) {
+    QB.webrtc.onAcceptCallListener = async function onAcceptCallListener(session, userId, extension) {
         console.group('onAcceptCallListener');
             console.info('UserId: ' + userId);
             console.info('Session: ' + session);
             console.info('Extension: ' + extension);
         console.groupEnd();
+
+        try {
+            await updateAppointment($this.state.appointmentId, $this.state.staffType, 0);
+        } catch (e) {
+            console.warn('update appointment error', e);
+        }
     };
 }
 

@@ -1,6 +1,6 @@
 import React from 'react';
-import {Button, Table, Form} from 'react-bootstrap';
-import {createRTCSession, getLocalMedia, onCall, qbPush} from '../qbHelpers';
+import {Button, Table} from 'react-bootstrap';
+import {createRTCSession, getLocalMedia, onCall, qbPush, updateAppointment} from '../qbHelpers';
 import {onSessionCloseListener, onCallListener, onRejectCallListener, onStopCallListener, onAcceptCallListener, onRemoteStreamListener} from '../qbEventListener';
 import AppointmentList from './AppointmentList';
 import {IncomeCall} from './modals';
@@ -25,7 +25,7 @@ export default class VideoScreen extends React.Component {
         onCallListener(this);
         onRejectCallListener();
         onStopCallListener();
-        onAcceptCallListener();
+        onAcceptCallListener(this);
         onRemoteStreamListener(this);
 
         this.getLocalStream = this.getLocalStream.bind(this);
@@ -35,6 +35,7 @@ export default class VideoScreen extends React.Component {
         this.onClickAccept = this.onClickAccept.bind(this);
         this.onHangUp = this.onHangUp.bind(this);
         this.changeStaffType = this.changeStaffType.bind(this);
+        this.sessionClear = this.sessionClear.bind(this);
     }
 
     componentWillReceiveProps(props) {
@@ -108,7 +109,7 @@ export default class VideoScreen extends React.Component {
         if (session) {
             session.reject({});
             this.refs.IncomeCall.handleClose();
-            this.setState({currentSession: null, receiverId: null, receiverName: null, receiverStatus: null});
+            this.sessionClear();
         }
     }
 
@@ -128,17 +129,31 @@ export default class VideoScreen extends React.Component {
             session.accept({});
         } catch (e) {
             session.stop({});
-            this.setState({currentSession: null, receiverId: null, receiverName: null, receiverStatus: null});
+            this.sessionClear();
         }
     }
 
-    onHangUp() {
-        this.state.currentSession.stop({});
-        this.setState({currentSession: null, receiverId: null, receiverName: null, receiverStatus: null});
+    async onHangUp() {
+        let state = this.state;
+
+        if (!state.currentSession) return;
+
+        state.currentSession.stop({});
+        this.sessionClear();
+
+        try {
+            await updateAppointment(state.appointmentId, state.staffType, 1);
+        } catch (err) {
+            console.warn('update appointment error', err);
+        }
     }
 
     changeStaffType(e) {
         this.setState({staffType: e.target.value});
+    }
+
+    sessionClear() {
+        this.setState({currentSession: null, appointmentId: null, receiverId: null, receiverName: null, receiverStatus: null});
     }
 
     render() {

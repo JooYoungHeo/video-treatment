@@ -5,6 +5,7 @@ class AppointmentService {
     constructor() {
         this.getAppointments = this.getAppointments.bind(this);
         this.callAbnormalEnd = this.callAbnormalEnd.bind(this);
+        this.updateAppointmentStatus = this.updateAppointmentStatus.bind(this);
     }
 
     async getAppointments(doctorId) {
@@ -46,6 +47,27 @@ class AppointmentService {
                 where: {
                     id: appointmentId,
                     userId: userId
+                }
+            });
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    async updateAppointmentStatus(appointmentId, staffType, flag) {
+
+        let status;
+
+        if (flag) status = (staffType === 'doctor')? 'Finish': 'Ready';
+        else status = (staffType === 'doctor')? 'Ing': 'Pre';
+
+        try {
+            return await models.Appointment.update({
+                status: status,
+                isActive: (status !== 'Finish')
+            }, {
+                where: {
+                    id: appointmentId
                 }
             });
         } catch (e) {

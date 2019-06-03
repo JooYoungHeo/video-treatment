@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 function getUui(appId) {
     let navigatorInfo = window.navigator;
     let screenInfo = window.screen;
@@ -131,6 +133,17 @@ function qbPush(sender, receiver) {
     });
 }
 
+async function updateAppointment(appointmentId, staffType, flag) {
+    try {
+        return await axios.put(`/api/v1/appointments/${appointmentId}`, {
+            staffType: staffType,
+            flag: flag
+        });
+    } catch (e) {
+        throw e;
+    }
+}
+
 export {getUui, createSession, qbLogin, qbCreateUser, qbUpdateUser,
     chatConnect, fillMedia, showMediaDevices, createRTCSession, getLocalMedia,
-    onCall, qbPush};
+    onCall, qbPush, updateAppointment};
