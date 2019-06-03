@@ -15,9 +15,9 @@
 .inactive{opacity:0.3}
 .appointment-section{width:33%}
 
-.qb-video-remote{position:relative;z-index:1}
+.qb-video-remote{width:533px;height:300px;position:relative;z-index:1}
 #remoteVideo{width:100%;height:100%;background:#bfbfbf}
-.qb-video-local{width:150px;position:relative;left:7px;top:-265px;z-index:2}
+.qb-video-local{width:150px;height:80px;position:relative;left:7px;top:-295px;z-index:2}
 .video-btn{margin-top:20px}
 .video-btn .call-btn{margin-left:20px}
 #localVideo{width:100%;height:100%;float:right;background:#bfbfbf;border:1px solid blak}
