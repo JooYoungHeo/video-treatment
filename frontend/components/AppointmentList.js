@@ -8,7 +8,8 @@ export default class AppointmentList extends React.Component {
         super(props);
         this.state = {
             doctorId: 1,
-            appointments: []
+            appointments: [],
+            clickedIndex: -1
         };
 
         this.apiInterval = null;
@@ -36,7 +37,8 @@ export default class AppointmentList extends React.Component {
         });
     }
 
-    onClickReceiver(appointmentId, qbId, name, status) {
+    onClickReceiver(i, appointmentId, qbId, name, status) {
+        if (this.state.clickedIndex !== i) this.setState({clickedIndex: i});
         if (typeof this.props.onClickReceiver === 'function') this.props.onClickReceiver(appointmentId, qbId, name, status);
     }
 
@@ -49,9 +51,10 @@ export default class AppointmentList extends React.Component {
                         {this.state.appointments.map((item, i) => {
                             let status = item.status.toLowerCase();
                             let statusText = status === 'none'? '상담전': status === 'pre'? '상담중': status === 'ready'? '진료전': '진료중';
+                            let variant = this.state.clickedIndex === i ? "danger":"";
 
                             return (
-                                <ListGroup.Item key={i} onClick={() => this.onClickReceiver(item.id, item.user.internalId, item.user.name, status)}>
+                                <ListGroup.Item className="appointment" variant={variant} key={i} onClick={() => this.onClickReceiver(i, item.id, item.user.internalId, item.user.name, status)}>
                                     <p>
                                         <strong>{item.user.name}</strong>
                                         <span className={`user-status ${status}`}>{statusText}</span>
