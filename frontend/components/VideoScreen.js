@@ -18,13 +18,14 @@ export default class VideoScreen extends React.Component {
             receiverId: null,
             receiverName: null,
             receiverStatus: null,
-            currentSession: null
+            currentSession: null,
+            calling: false
         };
 
         onSessionCloseListener(this);
         onCallListener(this);
         onRejectCallListener();
-        onStopCallListener();
+        onStopCallListener(this);
         onAcceptCallListener(this);
         onRemoteStreamListener(this);
 
@@ -93,6 +94,7 @@ export default class VideoScreen extends React.Component {
         }).then(() => {
             return qbPush(state.qbUser.full_name, [state.receiverId]);
         }).then(() => {
+            this.setState({calling: true});
             console.info('calling success');
         }).catch(err => {
             currentSession.stop({});
@@ -127,6 +129,7 @@ export default class VideoScreen extends React.Component {
         try {
             await getLocalMedia(session, mediaParams);
             session.accept({});
+            this.setState({calling: true});
         } catch (e) {
             session.stop({});
             this.sessionClear();
@@ -153,7 +156,7 @@ export default class VideoScreen extends React.Component {
     }
 
     sessionClear() {
-        this.setState({currentSession: null, appointmentId: null, receiverId: null, receiverName: null, receiverStatus: null});
+        this.setState({currentSession: null, appointmentId: null, receiverId: null, receiverName: null, receiverStatus: null, calling: false});
     }
 
     render() {
@@ -180,9 +183,9 @@ export default class VideoScreen extends React.Component {
                                     <video id="localVideo" className="qb-video_source" autoPlay playsinline/>
                                 </div>
                                 <div className="video-btn">
-                                    <Button variant="warning" onClick={this.getLocalStream}>local-stream</Button>
-                                    <Button variant="warning" className="call-btn" onClick={this.onCallingEvent}>on-call</Button>
-                                    <Button variant="warning" className="call-btn" onClick={this.onHangUp}>hang-up</Button>
+                                    <Button variant="warning" disabled={!this.state.receiverId} onClick={this.getLocalStream}>local-stream</Button>
+                                    <Button variant="warning" disabled={!this.state.currentSession} className="call-btn" onClick={this.onCallingEvent}>on-call</Button>
+                                    <Button variant="warning" disabled={this.state.calling} className="call-btn" onClick={this.onHangUp}>hang-up</Button>
                                 </div>
                             </td>
                             <td className="appointment-section">
