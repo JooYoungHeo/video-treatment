@@ -5,7 +5,6 @@ const appointmentRouter = new Router();
 const _appointmentController = new AppointmentController();
 
 appointmentRouter
-    .get('/', _appointmentController.getAppointments)
-    .post('/:id(\\d+)/error', _appointmentController.callAbnormalEnd);
+    .get('/', _appointmentController.getAppointments);
 
 export default appointmentRouter;

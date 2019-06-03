@@ -38,19 +38,15 @@ POST /users/login
 
 ### 영상진료에러
 ```
-영상진료 비정상 종료
+영상진료 앱 비정상 종료
 ---------
-POST /appointments/{id}/error
+POST /app/error
 ```
-**Request Parameter**
-
-| Name | Desc | Type | Required | Ex |
-| ---- | ---- | ---- | -------- | --- |
-| id  | 예약번호  | Integer  | o | 1 |
 
 **Request Body**
 ```
 {
+    appointmentId: 1,   // 예약번호
     userId: 1,   // 처방해줌 user id
     staffType: 'aide'   // caller type ["aide", "doctor"]
 } 
