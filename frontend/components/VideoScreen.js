@@ -185,7 +185,7 @@ export default class VideoScreen extends React.Component {
                                 <div className="video-btn">
                                     <Button variant="warning" disabled={!this.state.receiverId} onClick={this.getLocalStream}>local-stream</Button>
                                     <Button variant="warning" disabled={!this.state.currentSession} className="call-btn" onClick={this.onCallingEvent}>on-call</Button>
-                                    <Button variant="warning" disabled={this.state.calling} className="call-btn" onClick={this.onHangUp}>hang-up</Button>
+                                    <Button variant="warning" disabled={!this.state.calling} className="call-btn" onClick={this.onHangUp}>hang-up</Button>
                                 </div>
                             </td>
                             <td className="appointment-section">
