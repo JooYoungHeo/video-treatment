@@ -11,6 +11,8 @@
 * [로그인](#로그인)
 * [영상진료에러](#영상진료에러)
 
+***
+
 ### 로그인
 ```
 유저 로그인
@@ -36,6 +38,8 @@ POST /users/login
 }
 ```
 
+***
+
 ### 영상진료에러
 ```
 영상진료 앱 비정상 종료
@@ -58,3 +62,16 @@ POST /app/error
     id: 1
 }
 ```
+
+***
+
+### 프로토타입 시나리오
+
+![테스트 시나리오](./video-scenario.png)
+
+1. Quickblox login
+    * room 아무거나 상관없음
+2. 처방해줌 login
+3. 통화 요청
+    * 세션 ex) {appointmentId: 1, name: '줌', staffType: 'aide'}
+4. 앱 비정상 종료
