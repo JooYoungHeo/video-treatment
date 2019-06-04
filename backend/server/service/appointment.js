@@ -4,7 +4,7 @@ import models from '../../models';
 class AppointmentService {
     constructor() {
         this.getAppointments = this.getAppointments.bind(this);
-        this.callAbnormalEnd = this.callAbnormalEnd.bind(this);
+        this.appAbnormalEnd = this.appAbnormalEnd.bind(this);
         this.updateAppointmentStatus = this.updateAppointmentStatus.bind(this);
     }
 
@@ -37,12 +37,10 @@ class AppointmentService {
         }
     }
 
-    async callAbnormalEnd(appointmentId, userId, staffType) {
+    async appAbnormalEnd(appointmentId, userId) {
         try {
-            let status = staffType === 'doctor'? 'Ready': 'None';
-
             return await models.Appointment.update({
-                status: status
+                status: 'None'
             }, {
                 where: {
                     id: appointmentId,

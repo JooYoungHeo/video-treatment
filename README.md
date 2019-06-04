@@ -51,8 +51,7 @@ POST /app/error
 ```
 {
     appointmentId: 1,   // 예약번호
-    userId: 1,   // 처방해줌 user id
-    staffType: 'aide'   // caller type ["aide", "doctor"]
+    userId: 1   // 처방해줌 user id
 } 
 ```
 

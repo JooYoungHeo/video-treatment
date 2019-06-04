@@ -11,7 +11,7 @@ class AppController {
         try {
             let body = ctx.request.body || {};
 
-            await this._appointmentService.callAbnormalEnd(body.appointmentId, body.userId, body.staffType);
+            await this._appointmentService.appAbnormalEnd(body.appointmentId, body.userId);
 
             ctx.body = {id: body.appointmentId};
         } catch (e) {
