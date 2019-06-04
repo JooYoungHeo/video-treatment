@@ -14,58 +14,52 @@ export default class App extends React.Component {
         QB.init(Config.creds.appId, Config.creds.authKey, Config.creds.authSecret, Config.etc);
 
         this.state = {
-            nameFlag: true,
             id: '',
             password: '',
             username: '',
-            room: 'ZUM',
-            joinFlag: false,
             qbUser: null,
             deviceInfo: null
         };
 
         this.changeName = this.changeName.bind(this);
-        this.onService = this.onService.bind(this);
-        this.qbJoin = this.qbJoin.bind(this);
-        this.serviceLogin = this.serviceLogin.bind(this);
-        this.getMedia = this.getMedia.bind(this);
+        this.login = this.login.bind(this);
     }
 
     changeName(e, field) {
-        if (!this.state.nameFlag) return;
+        if (this.state.qbUser) return;
 
         this.setState({[field]: e.target.value});
     }
 
-    async onService() {
-        let state = this.state;
+    async login() {
+        let $state = this.state;
 
         try {
-            let user = await this.qbJoin(state);
+            let user = await App.connectQb($state.id, $state.password, $state.username, 'ZUM');
 
-            await this.serviceLogin(state, user.id);
+            await App.userLogin($state, user.id);
 
-            await chatConnect(user.id, Config.creds.appId, state.password);
+            await chatConnect(user.id, Config.creds.appId, $state.password);
 
-            this.setState({nameFlag: false, joinFlag: true, qbUser: user});
+            let deviceInfo = await App.getMedia();
 
-            await this.getMedia();
+            this.setState({qbUser: user, deviceInfo: deviceInfo});
+            console.info('[App] qb & app login success');
         } catch (e) {
-            console.warn('on service error', e);
-            this.setState({nameFlag: true, joinFlag: false, qbUser: null, id: '', password: '', username: ''});
+            this.setState({qbUser: null, id: '', password: '', username: '', deviceInfo: null});
+            console.warn('[App] qb & app login error', e);
         }
     }
 
-    async qbJoin(state) {
+    static async connectQb(id, password, username, room) {
         try {
             await createSession();
-            let user = await qbLogin(state.id, state.password);
+            let user = await qbLogin(id, password);
 
-            if (!user) {
-                await qbCreateUser(state.id, state.password, state.username, state.room);
-                user = await qbLogin(state.id, state.password);
-            } else {
-                user = await qbUpdateUser(user.id, state.username, state.room);
+            if (user) await qbUpdateUser(user.id, username, room);
+            else {
+                await qbCreateUser(id, password, username, room);
+                user = await qbLogin(id, password);
             }
 
             return user;
@@ -74,23 +68,21 @@ export default class App extends React.Component {
         }
     }
 
-    serviceLogin(state, internalId) {
-        return new Promise((resolve, reject) => {
-            axios.post('/api/v1/users/login', {
-                internalId: internalId,
+    static async userLogin(state, internalId) {
+        try {
+            return await axios.post('/api/v1/users/login', {
+                internalId,
                 qbId: state.id,
                 qbPassword: state.password,
                 username: state.username,
                 type: 'staff'
-            }).then(() => {
-                resolve();
-            }).catch(err => {
-                reject(err);
             });
-        });
+        } catch (e) {
+            throw e;
+        }
     }
 
-    async getMedia() {
+    static async getMedia() {
         try {
             let stream = await fillMedia();
             let [videoDevices, audioDevices] = await Promise.all([
@@ -101,17 +93,18 @@ export default class App extends React.Component {
             let videoDeviceId = videoDevices.length? videoDevices[0].deviceId: null;
             let audioDeviceId = audioDevices.length? audioDevices[0].deviceId: null;
 
-            this.setState({deviceInfo: [videoDeviceId, audioDeviceId]});
-
             if (stream) stream.getTracks().forEach(track => {track.stop()});
 
-            console.info('get media done');
+            return [videoDeviceId, audioDeviceId];
         } catch (e) {
-            console.warn('get media error', e);
+            throw e;
         }
     }
 
     render() {
+
+        let qbUser = this.state.qbUser;
+
         return (
             <div>
                 <Table className="container">
@@ -136,11 +129,11 @@ export default class App extends React.Component {
                                     </InputGroup.Prepend>
                                     <FormControl aria-describedby="inputGroup-sizing-sm" value={this.state.username} onChange={e => this.changeName(e, 'username')}/>
                                 </InputGroup>
-                                <Button variant="primary" onClick={this.onService} disabled={this.state.joinFlag}>QB 연결</Button>
-                                <Badge variant={this.state.joinFlag? 'success':'danger'} className="join-state">{this.state.joinFlag? '연결됨':'연결안됨'}</Badge>
+                                <Button variant="primary" onClick={this.login} disabled={qbUser}>Go</Button>
+                                <Badge variant={qbUser? 'success':'danger'} className="join-state">{qbUser? '연결됨':'연결안됨'}</Badge>
                             </td>
                             <td className="right-side">
-                                <VideoScreen qbUser={this.state.qbUser} deviceInfo={this.state.deviceInfo}/>
+                                <VideoScreen qbUser={qbUser} deviceInfo={this.state.deviceInfo}/>
                             </td>
                         </tr>
                     </tbody>
