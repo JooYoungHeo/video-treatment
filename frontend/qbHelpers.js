@@ -84,9 +84,14 @@ function createRTCSession(callees){
     return QB.webrtc.createNewSession(callees, QB.webrtc.CallType.VIDEO, null, {bandwidth: ''});
 }
 
-function getLocalMedia(session, params) {
+function getLocalMedia(session, audio, video, elemId = 'localVideo') {
     return new Promise((resolve, reject) => {
-        session.getUserMedia(params, (err, stream) => {
+        session.getUserMedia({
+            audio: {deviceId: audio},
+            video: {deviceId: video},
+            options: {muted: true, mirror: true},
+            elemId: elemId
+        }, (err, stream) => {
             if (err || !stream.getAudioTracks().length || !stream.getVideoTracks().length) reject(err);
             else resolve();
         });
@@ -112,8 +117,7 @@ function qbPush(sender, receiver) {
         };
 
         QB.pushnotifications.events.create(params, err => {
-            if (err) resolve();
-            else resolve();
+            resolve();
         });
     });
 }

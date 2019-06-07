@@ -25,13 +25,19 @@ function onCallListener ($this) {
     };
 }
 
-function onRejectCallListener() {
+function onRejectCallListener($this) {
     QB.webrtc.onRejectCallListener = (session, userId, extension) => {
         console.group('onRejectCallListener');
             console.info('Session: ' + session);
             console.info('UserId: ' + userId);
-            console.info('Extension: ' + extension);
+            console.info('Extension: ' + JSON.stringify(extension));
         console.groupEnd();
+
+        $this.setState({
+            currentSession: null,
+            targetUser: null,
+            callState: false
+        });
     }
 }
 
@@ -40,10 +46,14 @@ function onStopCallListener($this) {
         console.group('onStopCallListener');
             console.info('Session: ' + session);
             console.info('UserId: ' + userId);
-            console.info('Extension: ' + extension);
+            console.info('Extension: ' + JSON.stringify(extension));
         console.groupEnd();
 
-        $this.setState({calling: false});
+        $this.setState({
+            currentSession: null,
+            targetUser: null,
+            callState: false
+        });
     }
 }
 
@@ -52,10 +62,8 @@ function onAcceptCallListener($this) {
         console.group('onAcceptCallListener');
             console.info('UserId: ' + userId);
             console.info('Session: ' + session);
-            console.info('Extension: ' + extension);
+            console.info('Extension: ' + JSON.stringify(extension));
         console.groupEnd();
-
-        $this.setState({calling: true});
 
         try {
             await updateAppointment($this.state.appointmentId, $this.state.staffType, 0);

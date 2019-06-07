@@ -14,11 +14,12 @@ export default class AppointmentList extends React.Component {
 
         this.apiInterval = null;
         this.getAppointments = this.getAppointments.bind(this);
-        this.onClickReceiver = this.onClickReceiver.bind(this);
+        this.onClickTarget = this.onClickTarget.bind(this);
+        this.clearTarget = this.clearTarget.bind(this);
     }
 
     componentDidMount() {
-        this.apiInterval = setInterval(() => this.getAppointments(), 5000);
+        this.apiInterval = setInterval(() => this.getAppointments(), 1000);
     }
 
     componentWillUnmount() {
@@ -37,9 +38,13 @@ export default class AppointmentList extends React.Component {
         });
     }
 
-    onClickReceiver(i, appointmentId, qbId, name, status) {
+    onClickTarget(i, appointmentId, internalId, name, status) {
         if (this.state.clickedIndex !== i) this.setState({clickedIndex: i});
-        if (typeof this.props.onClickReceiver === 'function') this.props.onClickReceiver(appointmentId, qbId, name, status);
+        if (typeof this.props.onClickTarget === 'function') this.props.onClickTarget({appointmentId, internalId, name, status});
+    }
+
+    clearTarget() {
+        this.setState({clickedIndex: -1});
     }
 
     render() {
@@ -54,7 +59,7 @@ export default class AppointmentList extends React.Component {
                             let variant = this.state.clickedIndex === i ? "danger":"";
 
                             return (
-                                <ListGroup.Item className="appointment" variant={variant} key={i} onClick={() => this.onClickReceiver(i, item.id, item.user.internalId, item.user.name, status)}>
+                                <ListGroup.Item className="appointment" variant={variant} key={i} onClick={() => this.onClickTarget(i, item.id, item.user.internalId, item.user.name, status)}>
                                     <p>
                                         <strong>{item.user.name}</strong>
                                         <span className={`user-status ${status}`}>{statusText}</span>

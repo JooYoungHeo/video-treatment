@@ -56,7 +56,7 @@ export default class App extends React.Component {
             await createSession();
             let user = await qbLogin(id, password);
 
-            if (user) await qbUpdateUser(user.id, username, room);
+            if (user) user = await qbUpdateUser(user.id, username, room);
             else {
                 await qbCreateUser(id, password, username, room);
                 user = await qbLogin(id, password);

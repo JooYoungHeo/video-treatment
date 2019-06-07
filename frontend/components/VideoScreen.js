@@ -12,142 +12,139 @@ export default class VideoScreen extends React.Component {
         this.state = {
             staffType: 'aide',
             qbUser: null,
-            videoDeviceId: null,
-            audioDeviceId: null,
-            appointmentId: null,
-            receiverId: null,
-            receiverName: null,
-            receiverStatus: null,
+            deviceInfo: null,
             currentSession: null,
-            calling: false
+            targetUser: null,
+            callState: false
         };
 
         onSessionCloseListener(this);
         onCallListener(this);
-        onRejectCallListener();
+        onRejectCallListener(this);
         onStopCallListener(this);
         onAcceptCallListener(this);
         onRemoteStreamListener(this);
 
         this.getLocalStream = this.getLocalStream.bind(this);
-        this.onClickReceiver = this.onClickReceiver.bind(this);
-        this.onCallingEvent = this.onCallingEvent.bind(this);
-        this.onClickDecline = this.onClickDecline.bind(this);
+        this.dropLocalStream = this.dropLocalStream.bind(this);
+        this.clickTargetUser = this.clickTargetUser.bind(this);
+        this.makeCall = this.makeCall.bind(this);
+        this.clickDecline = this.clickDecline.bind(this);
         this.onClickAccept = this.onClickAccept.bind(this);
-        this.onHangUp = this.onHangUp.bind(this);
+        this.clickHangUp = this.clickHangUp.bind(this);
         this.changeStaffType = this.changeStaffType.bind(this);
-        this.sessionClear = this.sessionClear.bind(this);
     }
 
     componentWillReceiveProps(props) {
-
         if (!props.qbUser || !props.deviceInfo) return;
 
         this.setState({
             qbUser: props.qbUser,
-            videoDeviceId: props.deviceInfo[0],
-            audioDeviceId: props.deviceInfo[1]
+            deviceInfo: props.deviceInfo
         });
     }
 
     async getLocalStream() {
-        if (!this.state.videoDeviceId || !this.state.audioDeviceId || !this.state.receiverId) return;
+        if (!this.state.deviceInfo || !this.state.targetUser) return;
 
-        let mediaParams = {
-            audio: {deviceId: this.state.audioDeviceId},
-            video: {deviceId: this.state.videoDeviceId},
-            options: {muted: true, mirror: true},
-            elemId: 'localVideo'
-        };
-
-        let currentSession = createRTCSession([this.state.receiverId]);
-
-        this.setState({currentSession: currentSession});
+        let currentSession = createRTCSession([this.state.targetUser.internalId]);
 
         try {
-            await getLocalMedia(currentSession, mediaParams);
+            await getLocalMedia(currentSession, this.state.deviceInfo[1], this.state.deviceInfo[0]);
+            this.setState({currentSession: currentSession});
+            console.info('[App] get local stream success');
         } catch (e) {
             currentSession.stop({});
+            this.setState({currentSession: null});
+            console.warn('[App] get local stream fail', e);
         }
     }
 
-    onClickReceiver(appointmentId, internalId, name, status) {
-        this.setState({appointmentId: appointmentId, receiverId: internalId, receiverName: name, receiverStatus: status});
+    dropLocalStream() {
+        let $state = this.state;
+        if (!$state.currentSession || $state.callState) return;
+
+        $state.currentSession.stop({});
+        this.setState({currentSession: null});
+
+        console.info('[App] drop local stream');
     }
 
-    onCallingEvent() {
-        let state = this.state;
+    clickTargetUser(targetUser) {
+        this.setState({targetUser: targetUser});
+    }
 
-        if (!state.receiverId) return;
 
-        let currentSession = state.currentSession;
+    async makeCall() {
+        let $state = this.state;
+        let $target = $state.targetUser;
 
-        if ((state.staffType !== 'aide' || state.receiverStatus !== 'none') && (state.staffType !== 'doctor' || state.receiverStatus !== 'ready')) {
-            alert('잘못된 대상');
+        if (!$state.currentSession || !$target) return;
+        if (($state.staffType !== 'aide' || $target.status !== 'none') && ($state.staffType !== 'doctor' || $target.status !== 'ready')) {
+            alert('통화 불가');
             return;
         }
 
-        onCall(currentSession, {
-            appointmentId: state.appointmentId,
-            name: state.qbUser.full_name,
-            staffType: state.staffType
-        }).then(() => {
-            return qbPush(state.qbUser.full_name, [state.receiverId]);
-        }).then(() => {
-            this.setState({calling: true});
-            console.info('calling success');
-        }).catch(err => {
-            currentSession.stop({});
-            this.setState({currentSession: null});
+        try {
+            await qbPush($state.qbUser.full_name, [$target.internalId]);
+            await onCall($state.currentSession, {
+                appointmentId: $target.appointmentId,
+                name: $target.name,
+                staffType: $state.staffType
+            });
 
-            if (err) console.warn('push failed', err);
-            else console.warn('calling failed');
-        });
+            this.setState({callState: true});
+            console.info('[App] make a call success');
+        } catch (e) {
+            $state.currentSession.stop({});
+            this.setState({currentSession: null, targetUser: null});
+            console.warn('[App] make a call fail', e);
+        }
     }
 
-    onClickDecline() {
+    async clickHangUp() {
+        let $state = this.state;
+        let appointmentId = $state.targetUser.appointmentId;
+
+        if (!$state.currentSession || !$state.callState) return;
+
+        $state.currentSession.stop({});
+
+        this.refs.AppointmentList.clearTarget();
+        this.setState({currentSession: null, targetUser: null, callState: false});
+        console.info('[App] hangup call success');
+
+        try {
+            await updateAppointment(appointmentId, $state.staffType, 1);
+            console.info('[App] update appointment status success');
+        } catch (e) {
+            console.warn('[App] update appointment status fail', e);
+        }
+    }
+
+    clickDecline() {
+        this.refs.IncomeCall.handleClose();
+
         let session = this.state.currentSession;
 
         if (session) {
             session.reject({});
-            this.refs.IncomeCall.handleClose();
-            this.sessionClear();
+            this.setState({currentSession: null});
         }
     }
 
     async onClickAccept() {
         this.refs.IncomeCall.handleClose();
 
-        let mediaParams = {
-            audio: {deviceId: this.state.audioDeviceId},
-            video: {deviceId: this.state.videoDeviceId},
-            options: {muted: true, mirror: true},
-            elemId: 'localVideo'
-        };
         let session = this.state.currentSession;
 
         try {
-            await getLocalMedia(session, mediaParams);
+            await getLocalMedia(session, this.state.deviceInfo[1], this.state.deviceInfo[0]);
             session.accept({});
-            this.setState({calling: true});
+            this.setState({callState: true});
         } catch (e) {
             session.stop({});
-            this.sessionClear();
-        }
-    }
-
-    async onHangUp() {
-        let state = this.state;
-
-        if (!state.currentSession) return;
-
-        state.currentSession.stop({});
-        this.sessionClear();
-
-        try {
-            await updateAppointment(state.appointmentId, state.staffType, 1);
-        } catch (err) {
-            console.warn('update appointment error', err);
+            this.setState({currentSession: null});
         }
     }
 
@@ -155,16 +152,12 @@ export default class VideoScreen extends React.Component {
         this.setState({staffType: e.target.value});
     }
 
-    sessionClear() {
-        this.setState({currentSession: null, appointmentId: null, receiverId: null, receiverName: null, receiverStatus: null, calling: false});
-    }
-
     render() {
         let extraClass = this.state.qbUser? '': 'inactive';
         return (
             <div>
                 <p className={`target ${extraClass}`}>
-                    선택된 환자 : <span className="target-text">{this.state.receiverName? this.state.receiverName: '없음'}</span>
+                    선택된 환자 : <span className="target-text">{this.state.targetUser? this.state.targetUser.name: '없음'}</span>
                     <span className="staff-desc">/</span>
                     <span className="staff-desc">접속정보 : </span>
                     <input className="staff-desc staff-radio" type="radio" value="aide" checked={this.state.staffType==='aide'} onChange={this.changeStaffType}/>
@@ -177,24 +170,25 @@ export default class VideoScreen extends React.Component {
                         <tr>
                             <td className={`video-section ${extraClass}`}>
                                 <div className="qb-video-remote">
-                                    <video id="remoteVideo" className="qb-video_source" autoPlay playsinline/>
+                                    <video id="remoteVideo" className="qb-video_source" autoPlay/>
                                 </div>
                                 <div className="qb-video-local">
-                                    <video id="localVideo" className="qb-video_source" autoPlay playsinline/>
+                                    <video id="localVideo" className="qb-video_source" autoPlay/>
                                 </div>
                                 <div className="video-btn">
-                                    <Button variant="warning" disabled={!this.state.receiverId} onClick={this.getLocalStream}>local-stream</Button>
-                                    <Button variant="warning" disabled={!this.state.currentSession} className="call-btn" onClick={this.onCallingEvent}>on-call</Button>
-                                    <Button variant="warning" disabled={!this.state.calling} className="call-btn" onClick={this.onHangUp}>hang-up</Button>
+                                    <Button variant="warning" disabled={this.state.currentSession||this.state.callState} onClick={this.getLocalStream}>로컬 연결</Button>
+                                    <Button variant="warning" disabled={!this.state.currentSession||this.state.callState} className="call-btn" onClick={this.dropLocalStream}>로컬 해제</Button>
+                                    <Button variant="warning" disabled={!this.state.currentSession||this.state.callState} className="call-btn" onClick={this.makeCall}>발신</Button>
+                                    <Button variant="warning" disabled={!this.state.callState} className="call-btn" onClick={this.clickHangUp}>종료</Button>
                                 </div>
                             </td>
                             <td className="appointment-section">
-                                <AppointmentList onClickReceiver={this.onClickReceiver}/>
+                                <AppointmentList ref="AppointmentList" onClickTarget={this.clickTargetUser}/>
                             </td>
                         </tr>
                     </tbody>
                 </Table>
-                <IncomeCall ref="IncomeCall" onClickDecline={this.onClickDecline} onClickAccept={this.onClickAccept}/>
+                <IncomeCall ref="IncomeCall" onClickDecline={this.clickDecline} onClickAccept={this.onClickAccept}/>
             </div>
         )
     }
