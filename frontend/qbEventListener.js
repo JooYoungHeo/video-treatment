@@ -18,7 +18,7 @@ function onCallListener ($this) {
             console.info('Extension: ' + JSON.stringify(extension));
         console.groupEnd();
 
-        $this.setState({currentSession: session});
+        $this.setState({currentSession: session, callState: true});
 
         if (session.state !== QB.webrtc.SessionConnectionState.CLOSED)
             $this.refs.IncomeCall.handleOn();
@@ -33,8 +33,9 @@ function onRejectCallListener($this) {
             console.info('Extension: ' + JSON.stringify(extension));
         console.groupEnd();
 
+        $this.refs.AppointmentList.clearTarget();
+
         $this.setState({
-            currentSession: null,
             targetUser: null,
             callState: false
         });
@@ -49,8 +50,9 @@ function onStopCallListener($this) {
             console.info('Extension: ' + JSON.stringify(extension));
         console.groupEnd();
 
+        $this.refs.AppointmentList.clearTarget();
+
         $this.setState({
-            currentSession: null,
             targetUser: null,
             callState: false
         });
@@ -66,7 +68,7 @@ function onAcceptCallListener($this) {
         console.groupEnd();
 
         try {
-            await updateAppointment($this.state.appointmentId, $this.state.staffType, 0);
+            await updateAppointment($this.state.targetUser.appointmentId, $this.state.staffType, 0);
         } catch (e) {
             console.warn('update appointment error', e);
         }
