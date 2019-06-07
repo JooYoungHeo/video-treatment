@@ -33,6 +33,10 @@ export default class VideoScreen extends React.Component {
         this.onClickAccept = this.onClickAccept.bind(this);
         this.clickHangUp = this.clickHangUp.bind(this);
         this.changeStaffType = this.changeStaffType.bind(this);
+
+
+        this.startVideoCall = this.startVideoCall.bind(this);
+        this.endVideoCall = this.endVideoCall.bind(this);
     }
 
     componentWillReceiveProps(props) {
@@ -152,6 +156,55 @@ export default class VideoScreen extends React.Component {
         this.setState({staffType: e.target.value});
     }
 
+    async startVideoCall() {
+        let $state = this.state;
+        let $target = $state.targetUser;
+
+        if (!$state.deviceInfo || !$target) return;
+        if (($state.staffType !== 'aide' || $target.status !== 'none') && ($state.staffType !== 'doctor' || $target.status !== 'ready')) return;
+
+        let currentSession = createRTCSession([$target.internalId]);
+
+        try {
+            await getLocalMedia(currentSession, $state.deviceInfo[1], $state.deviceInfo[0]);
+            console.info('[App] get local stream success');
+
+            await qbPush($target.name, [$target.internalId]);
+            await onCall(currentSession, {
+                appointmentId: $target.appointmentId,
+                name: $target.name,
+                staffType: $state.staffType
+            });
+
+            this.setState({currentSession: currentSession, callState: true});
+            console.info('[App] start video call success');
+        } catch (e) {
+            currentSession.stop({});
+            console.warn('[App] start video call fail', e);
+        }
+    }
+
+    async endVideoCall() {
+        let $state = this.state;
+        let appointmentId = $state.targetUser? $state.targetUser.appointmentId: null;
+
+        if (!$state.callState) return;
+
+        $state.currentSession.stop({});
+        this.setState({currentSession: null, targetUser: null, callState: false});
+        this.refs.AppointmentList.clearTarget();
+
+        console.info('[App] end video call success');
+
+        try {
+            if (appointmentId) await updateAppointment(appointmentId, $state.staffType, 1);
+
+            console.info('[App] update appointment status success');
+        } catch (e) {
+            console.warn('[App] update appointment status fail', e);
+        }
+    }
+
     render() {
         let extraClass = this.state.qbUser? '': 'inactive';
         return (
@@ -176,10 +229,12 @@ export default class VideoScreen extends React.Component {
                                     <video id="localVideo" className="qb-video_source" autoPlay/>
                                 </div>
                                 <div className="video-btn">
-                                    <Button variant="warning" disabled={this.state.currentSession||this.state.callState} onClick={this.getLocalStream}>로컬 연결</Button>
-                                    <Button variant="warning" disabled={!this.state.currentSession||this.state.callState} className="call-btn" onClick={this.dropLocalStream}>로컬 해제</Button>
-                                    <Button variant="warning" disabled={!this.state.currentSession||this.state.callState} className="call-btn" onClick={this.makeCall}>발신</Button>
-                                    <Button variant="warning" disabled={!this.state.callState} className="call-btn" onClick={this.clickHangUp}>종료</Button>
+                                    {/*<Button variant="warning" disabled={this.state.currentSession||this.state.callState} onClick={this.getLocalStream}>로컬 연결</Button>*/}
+                                    {/*<Button variant="warning" disabled={!this.state.currentSession||this.state.callState} className="call-btn" onClick={this.dropLocalStream}>로컬 해제</Button>*/}
+                                    {/*<Button variant="warning" disabled={!this.state.currentSession||this.state.callState} className="call-btn" onClick={this.makeCall}>발신</Button>*/}
+                                    {/*<Button variant="warning" disabled={!this.state.callState} className="call-btn" onClick={this.clickHangUp}>종료</Button>*/}
+                                    <Button variant="primary" onClick={this.startVideoCall}>video call</Button>
+                                    <Button variant="dark" className="call-btn" onClick={this.endVideoCall}>end call</Button>
                                 </div>
                             </td>
                             <td className="appointment-section">
