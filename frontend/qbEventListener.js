@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {updateAppointment} from './qbHelpers';
 
 function onSessionCloseListener ($this) {
@@ -39,8 +40,9 @@ function onRejectCallListener($this) {
             targetUser: null,
             callState: false
         });
-    }
+   }
 }
+
 
 function onStopCallListener($this) {
     QB.webrtc.onStopCallListener = (session, userId, extension) => {
@@ -50,12 +52,21 @@ function onStopCallListener($this) {
             console.info('Extension: ' + JSON.stringify(extension));
         console.groupEnd();
 
-        $this.refs.AppointmentList.clearTarget();
+        let targetUser = $this.state.targetUser;
 
-        $this.setState({
-            targetUser: null,
-            callState: false
-        });
+        $this.refs.AppointmentList.clearTarget();
+        $this.setState({targetUser: null, callState: false});
+
+        if (targetUser) {
+            axios.post(`/api/v1/app/error`, {
+                appointmentId: targetUser.appointmentId,
+                userId: targetUser.uid
+            }).then(() => {
+                console.info('[App] update appointment none success');
+            }).catch(e => {
+                console.warn('[App] update appointment none fail', e);
+            });
+        }
     }
 }
 
@@ -67,10 +78,13 @@ function onAcceptCallListener($this) {
             console.info('Extension: ' + JSON.stringify(extension));
         console.groupEnd();
 
+        $this.setState({callState: true});
+
         try {
             await updateAppointment($this.state.targetUser.appointmentId, $this.state.staffType, 0);
+            console.info('[App] update appointment success');
         } catch (e) {
-            console.warn('update appointment error', e);
+            console.warn('[App] update appointment fail', e);
         }
     };
 }

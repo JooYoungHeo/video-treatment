@@ -25,13 +25,13 @@ export default class VideoScreen extends React.Component {
         onAcceptCallListener(this);
         onRemoteStreamListener(this);
 
-        this.getLocalStream = this.getLocalStream.bind(this);
-        this.dropLocalStream = this.dropLocalStream.bind(this);
+        // this.getLocalStream = this.getLocalStream.bind(this);
+        // this.dropLocalStream = this.dropLocalStream.bind(this);
         this.clickTargetUser = this.clickTargetUser.bind(this);
-        this.makeCall = this.makeCall.bind(this);
+        // this.makeCall = this.makeCall.bind(this);
         this.clickDecline = this.clickDecline.bind(this);
         this.onClickAccept = this.onClickAccept.bind(this);
-        this.clickHangUp = this.clickHangUp.bind(this);
+        // this.clickHangUp = this.clickHangUp.bind(this);
         this.changeStaffType = this.changeStaffType.bind(this);
 
 
@@ -48,83 +48,83 @@ export default class VideoScreen extends React.Component {
         });
     }
 
-    async getLocalStream() {
-        if (!this.state.deviceInfo || !this.state.targetUser) return;
-
-        let currentSession = createRTCSession([this.state.targetUser.internalId]);
-
-        try {
-            await getLocalMedia(currentSession, this.state.deviceInfo[1], this.state.deviceInfo[0]);
-            this.setState({currentSession: currentSession});
-            console.info('[App] get local stream success');
-        } catch (e) {
-            currentSession.stop({});
-            this.setState({currentSession: null});
-            console.warn('[App] get local stream fail', e);
-        }
-    }
-
-    dropLocalStream() {
-        let $state = this.state;
-        if (!$state.currentSession || $state.callState) return;
-
-        $state.currentSession.stop({});
-        this.setState({currentSession: null});
-
-        console.info('[App] drop local stream');
-    }
+    // async getLocalStream() {
+    //     if (!this.state.deviceInfo || !this.state.targetUser) return;
+    //
+    //     let currentSession = createRTCSession([this.state.targetUser.internalId]);
+    //
+    //     try {
+    //         await getLocalMedia(currentSession, this.state.deviceInfo[1], this.state.deviceInfo[0]);
+    //         this.setState({currentSession: currentSession});
+    //         console.info('[App] get local stream success');
+    //     } catch (e) {
+    //         currentSession.stop({});
+    //         this.setState({currentSession: null});
+    //         console.warn('[App] get local stream fail', e);
+    //     }
+    // }
+    //
+    // dropLocalStream() {
+    //     let $state = this.state;
+    //     if (!$state.currentSession || $state.callState) return;
+    //
+    //     $state.currentSession.stop({});
+    //     this.setState({currentSession: null});
+    //
+    //     console.info('[App] drop local stream');
+    // }
 
     clickTargetUser(targetUser) {
         this.setState({targetUser: targetUser});
     }
 
 
-    async makeCall() {
-        let $state = this.state;
-        let $target = $state.targetUser;
-
-        if (!$state.currentSession || !$target) return;
-        if (($state.staffType !== 'aide' || $target.status !== 'none') && ($state.staffType !== 'doctor' || $target.status !== 'ready')) {
-            alert('통화 불가');
-            return;
-        }
-
-        try {
-            await qbPush($state.qbUser.full_name, [$target.internalId]);
-            await onCall($state.currentSession, {
-                appointmentId: $target.appointmentId,
-                name: $target.name,
-                staffType: $state.staffType
-            });
-
-            this.setState({callState: true});
-            console.info('[App] make a call success');
-        } catch (e) {
-            $state.currentSession.stop({});
-            this.setState({currentSession: null, targetUser: null});
-            console.warn('[App] make a call fail', e);
-        }
-    }
-
-    async clickHangUp() {
-        let $state = this.state;
-        let appointmentId = $state.targetUser.appointmentId;
-
-        if (!$state.currentSession || !$state.callState) return;
-
-        $state.currentSession.stop({});
-
-        this.refs.AppointmentList.clearTarget();
-        this.setState({currentSession: null, targetUser: null, callState: false});
-        console.info('[App] hangup call success');
-
-        try {
-            await updateAppointment(appointmentId, $state.staffType, 1);
-            console.info('[App] update appointment status success');
-        } catch (e) {
-            console.warn('[App] update appointment status fail', e);
-        }
-    }
+    // async makeCall() {
+    //     let $state = this.state;
+    //     let $target = $state.targetUser;
+    //
+    //     if (!$state.currentSession || !$target) return;
+    //     if (($state.staffType !== 'aide' || $target.status !== 'none') && ($state.staffType !== 'doctor' || $target.status !== 'ready')) {
+    //         alert('통화 불가');
+    //         return;
+    //     }
+    //
+    //     try {
+    //         await qbPush($state.qbUser.full_name, [$target.internalId]);
+    //         await onCall($state.currentSession, {
+    //             appointmentId: $target.appointmentId,
+    //             name: $target.name,
+    //             staffType: $state.staffType
+    //         });
+    //
+    //         this.setState({callState: true});
+    //         console.info('[App] make a call success');
+    //     } catch (e) {
+    //         $state.currentSession.stop({});
+    //         this.setState({currentSession: null, targetUser: null});
+    //         console.warn('[App] make a call fail', e);
+    //     }
+    // }
+    //
+    // async clickHangUp() {
+    //     let $state = this.state;
+    //     let appointmentId = $state.targetUser.appointmentId;
+    //
+    //     if (!$state.currentSession || !$state.callState) return;
+    //
+    //     $state.currentSession.stop({});
+    //
+    //     this.refs.AppointmentList.clearTarget();
+    //     this.setState({currentSession: null, targetUser: null, callState: false});
+    //     console.info('[App] hangup call success');
+    //
+    //     try {
+    //         await updateAppointment(appointmentId, $state.staffType, 1);
+    //         console.info('[App] update appointment status success');
+    //     } catch (e) {
+    //         console.warn('[App] update appointment status fail', e);
+    //     }
+    // }
 
     clickDecline() {
         this.refs.IncomeCall.handleClose();
@@ -176,7 +176,7 @@ export default class VideoScreen extends React.Component {
                 staffType: $state.staffType
             });
 
-            this.setState({currentSession: currentSession, callState: true});
+            this.setState({currentSession: currentSession});
             console.info('[App] start video call success');
         } catch (e) {
             currentSession.stop({});
@@ -196,12 +196,13 @@ export default class VideoScreen extends React.Component {
 
         console.info('[App] end video call success');
 
-        try {
-            if (appointmentId) await updateAppointment(appointmentId, $state.staffType, 1);
-
-            console.info('[App] update appointment status success');
-        } catch (e) {
-            console.warn('[App] update appointment status fail', e);
+        if (appointmentId) {
+            try {
+                await updateAppointment(appointmentId, $state.staffType, 1);
+                console.info('[App] update appointment status success');
+            } catch (e) {
+                console.warn('[App] update appointment status fail', e);
+            }
         }
     }
 

@@ -38,9 +38,9 @@ export default class AppointmentList extends React.Component {
         });
     }
 
-    onClickTarget(i, appointmentId, internalId, name, status) {
+    onClickTarget(i, appointmentId, internalId, name, uid, status) {
         if (this.state.clickedIndex !== i) this.setState({clickedIndex: i});
-        if (typeof this.props.onClickTarget === 'function') this.props.onClickTarget({appointmentId, internalId, name, status});
+        if (typeof this.props.onClickTarget === 'function') this.props.onClickTarget({appointmentId, internalId, name, uid, status});
     }
 
     clearTarget() {
@@ -59,7 +59,7 @@ export default class AppointmentList extends React.Component {
                             let variant = this.state.clickedIndex === i ? "danger":"";
 
                             return (
-                                <ListGroup.Item className="appointment" variant={variant} key={i} onClick={() => this.onClickTarget(i, item.id, item.user.internalId, item.user.name, status)}>
+                                <ListGroup.Item className="appointment" variant={variant} key={i} onClick={() => this.onClickTarget(i, item.id, item.user.internalId, item.user.name, item.user.id, status)}>
                                     <p>
                                         <strong>{item.user.name}</strong>
                                         <span className={`user-status ${status}`}>{statusText}</span>
