@@ -25,16 +25,10 @@ export default class VideoScreen extends React.Component {
         onAcceptCallListener(this);
         onRemoteStreamListener(this);
 
-        // this.getLocalStream = this.getLocalStream.bind(this);
-        // this.dropLocalStream = this.dropLocalStream.bind(this);
         this.clickTargetUser = this.clickTargetUser.bind(this);
-        // this.makeCall = this.makeCall.bind(this);
         this.clickDecline = this.clickDecline.bind(this);
         this.onClickAccept = this.onClickAccept.bind(this);
-        // this.clickHangUp = this.clickHangUp.bind(this);
         this.changeStaffType = this.changeStaffType.bind(this);
-
-
         this.startVideoCall = this.startVideoCall.bind(this);
         this.endVideoCall = this.endVideoCall.bind(this);
     }
@@ -48,83 +42,9 @@ export default class VideoScreen extends React.Component {
         });
     }
 
-    // async getLocalStream() {
-    //     if (!this.state.deviceInfo || !this.state.targetUser) return;
-    //
-    //     let currentSession = createRTCSession([this.state.targetUser.internalId]);
-    //
-    //     try {
-    //         await getLocalMedia(currentSession, this.state.deviceInfo[1], this.state.deviceInfo[0]);
-    //         this.setState({currentSession: currentSession});
-    //         console.info('[App] get local stream success');
-    //     } catch (e) {
-    //         currentSession.stop({});
-    //         this.setState({currentSession: null});
-    //         console.warn('[App] get local stream fail', e);
-    //     }
-    // }
-    //
-    // dropLocalStream() {
-    //     let $state = this.state;
-    //     if (!$state.currentSession || $state.callState) return;
-    //
-    //     $state.currentSession.stop({});
-    //     this.setState({currentSession: null});
-    //
-    //     console.info('[App] drop local stream');
-    // }
-
     clickTargetUser(targetUser) {
         this.setState({targetUser: targetUser});
     }
-
-
-    // async makeCall() {
-    //     let $state = this.state;
-    //     let $target = $state.targetUser;
-    //
-    //     if (!$state.currentSession || !$target) return;
-    //     if (($state.staffType !== 'aide' || $target.status !== 'none') && ($state.staffType !== 'doctor' || $target.status !== 'ready')) {
-    //         alert('통화 불가');
-    //         return;
-    //     }
-    //
-    //     try {
-    //         await qbPush($state.qbUser.full_name, [$target.internalId]);
-    //         await onCall($state.currentSession, {
-    //             appointmentId: $target.appointmentId,
-    //             name: $target.name,
-    //             staffType: $state.staffType
-    //         });
-    //
-    //         this.setState({callState: true});
-    //         console.info('[App] make a call success');
-    //     } catch (e) {
-    //         $state.currentSession.stop({});
-    //         this.setState({currentSession: null, targetUser: null});
-    //         console.warn('[App] make a call fail', e);
-    //     }
-    // }
-    //
-    // async clickHangUp() {
-    //     let $state = this.state;
-    //     let appointmentId = $state.targetUser.appointmentId;
-    //
-    //     if (!$state.currentSession || !$state.callState) return;
-    //
-    //     $state.currentSession.stop({});
-    //
-    //     this.refs.AppointmentList.clearTarget();
-    //     this.setState({currentSession: null, targetUser: null, callState: false});
-    //     console.info('[App] hangup call success');
-    //
-    //     try {
-    //         await updateAppointment(appointmentId, $state.staffType, 1);
-    //         console.info('[App] update appointment status success');
-    //     } catch (e) {
-    //         console.warn('[App] update appointment status fail', e);
-    //     }
-    // }
 
     clickDecline() {
         this.refs.IncomeCall.handleClose();
@@ -160,7 +80,7 @@ export default class VideoScreen extends React.Component {
         let $state = this.state;
         let $target = $state.targetUser;
 
-        if (!$state.deviceInfo || !$target) return;
+        if (!$state.deviceInfo || !$target || $state.callState) return;
         if (($state.staffType !== 'aide' || $target.status !== 'none') && ($state.staffType !== 'doctor' || $target.status !== 'ready')) return;
 
         let currentSession = createRTCSession([$target.internalId]);
@@ -230,12 +150,8 @@ export default class VideoScreen extends React.Component {
                                     <video id="localVideo" className="qb-video_source" autoPlay/>
                                 </div>
                                 <div className="video-btn">
-                                    {/*<Button variant="warning" disabled={this.state.currentSession||this.state.callState} onClick={this.getLocalStream}>로컬 연결</Button>*/}
-                                    {/*<Button variant="warning" disabled={!this.state.currentSession||this.state.callState} className="call-btn" onClick={this.dropLocalStream}>로컬 해제</Button>*/}
-                                    {/*<Button variant="warning" disabled={!this.state.currentSession||this.state.callState} className="call-btn" onClick={this.makeCall}>발신</Button>*/}
-                                    {/*<Button variant="warning" disabled={!this.state.callState} className="call-btn" onClick={this.clickHangUp}>종료</Button>*/}
                                     <Button variant="primary" onClick={this.startVideoCall}>video call</Button>
-                                    <Button variant="dark" className="call-btn" onClick={this.endVideoCall}>end call</Button>
+                                    <Button variant="danger" className="call-btn" onClick={this.endVideoCall}>end call</Button>
                                 </div>
                             </td>
                             <td className="appointment-section">
