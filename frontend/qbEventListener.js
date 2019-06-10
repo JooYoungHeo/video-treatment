@@ -14,7 +14,15 @@ function onSessionCloseListener ($this) {
 
 function onUserNotAnswerListener ($this) {
     QB.webrtc.onUserNotAnswerListener = (session, userId) => {
+        console.group('onUserNotAnswerListener');
+            console.info('UserId: ' + userId);
+            console.info('Session: ' + session);
+        console.groupEnd();
 
+        $this.refs.AppointmentList.clearTarget();
+        $this.setState({targetUser: null});
+
+        if ($this.state.currentSession) $this.state.currentSession.reject({});
     };
 }
 
@@ -41,11 +49,7 @@ function onRejectCallListener($this) {
         console.groupEnd();
 
         $this.refs.AppointmentList.clearTarget();
-
-        $this.setState({
-            targetUser: null,
-            callState: false
-        });
+        $this.setState({targetUser: null, callState: false});
    }
 }
 
