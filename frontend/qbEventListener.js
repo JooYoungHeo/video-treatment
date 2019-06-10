@@ -12,6 +12,12 @@ function onSessionCloseListener ($this) {
     };
 }
 
+function onUserNotAnswerListener ($this) {
+    QB.webrtc.onUserNotAnswerListener = (session, userId) => {
+
+    };
+}
+
 function onCallListener ($this) {
     QB.webrtc.onCallListener = (session, extension) => {
         console.group('onCallListener');
@@ -108,4 +114,4 @@ function onRemoteStreamListener($this) {
     }
 }
 
-export {onSessionCloseListener, onCallListener, onRejectCallListener, onStopCallListener, onAcceptCallListener, onRemoteStreamListener};
+export {onSessionCloseListener, onUserNotAnswerListener, onCallListener, onRejectCallListener, onStopCallListener, onAcceptCallListener, onRemoteStreamListener};

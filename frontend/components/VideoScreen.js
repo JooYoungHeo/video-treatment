@@ -89,10 +89,10 @@ export default class VideoScreen extends React.Component {
             await getLocalMedia(currentSession, $state.deviceInfo[1], $state.deviceInfo[0]);
             console.info('[App] get local stream success');
 
-            await qbPush($target.name, [$target.internalId]);
+            await qbPush($state.qbUser.full_name, [$target.internalId]);
             await onCall(currentSession, {
                 appointmentId: $target.appointmentId,
-                name: $target.name,
+                name: $state.qbUser.full_name,
                 staffType: $state.staffType
             });
 
