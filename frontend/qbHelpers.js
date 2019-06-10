@@ -110,6 +110,7 @@ function onCall(session, extension) {
 function qbPush(sender, receiver) {
     return new Promise((resolve, reject) => {
         let params = {
+            push_type: 'apns_voip',
             notification_type: 'push',
             user: {ids: receiver},
             environment: 'development',
