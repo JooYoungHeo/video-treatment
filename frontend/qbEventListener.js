@@ -48,6 +48,7 @@ function onRejectCallListener($this) {
             console.info('Extension: ' + JSON.stringify(extension));
         console.groupEnd();
 
+        $this.refs.IncomeCall.handleClose();
         $this.refs.AppointmentList.clearTarget();
         $this.setState({targetUser: null, callState: false});
    }
