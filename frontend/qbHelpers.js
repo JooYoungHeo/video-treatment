@@ -93,7 +93,7 @@ function getLocalMedia(session, audio, video, elemId = 'localVideo') {
             elemId: elemId
         }, (err, stream) => {
             if (err || !stream.getAudioTracks().length || !stream.getVideoTracks().length) reject(err);
-            else resolve();
+            else resolve(stream);
         });
     });
 }

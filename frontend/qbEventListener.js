@@ -114,8 +114,9 @@ function onRemoteStreamListener($this) {
         if (state === peerConnList.DISCONNECTED || state === peerConnList.FAILED || state === peerConnList.CLOSED) return false;
 
         $this.state.currentSession.peerConnections[userId].stream = stream;
-
         $this.state.currentSession.attachMediaStream('remoteVideo', stream);
+
+        $this.startRecord(stream);
     }
 }
 

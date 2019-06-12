@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import {Button, Table} from 'react-bootstrap';
 import {createRTCSession, getLocalMedia, onCall, qbPush, updateAppointment} from '../qbHelpers';
 import {onSessionCloseListener, onUserNotAnswerListener, onCallListener, onRejectCallListener, onStopCallListener,
@@ -16,7 +17,8 @@ export default class VideoScreen extends React.Component {
             deviceInfo: null,
             currentSession: null,
             targetUser: null,
-            callState: false
+            callState: false,
+            recorder: null
         };
 
         onSessionCloseListener(this);
@@ -33,6 +35,8 @@ export default class VideoScreen extends React.Component {
         this.changeStaffType = this.changeStaffType.bind(this);
         this.startVideoCall = this.startVideoCall.bind(this);
         this.endVideoCall = this.endVideoCall.bind(this);
+        this.startRecord = this.startRecord.bind(this);
+        this.stopRecord = this.stopRecord.bind(this);
     }
 
     componentWillReceiveProps(props) {
@@ -112,8 +116,8 @@ export default class VideoScreen extends React.Component {
 
         if (!$state.callState) return;
 
+        $state.recorder.stop();
         $state.currentSession.stop({});
-        this.setState({currentSession: null, targetUser: null, callState: false});
         this.refs.AppointmentList.clearTarget();
 
         console.info('[App] end video call success');
@@ -126,6 +130,34 @@ export default class VideoScreen extends React.Component {
                 console.warn('[App] update appointment status fail', e);
             }
         }
+    }
+
+    startRecord(stream) {
+        let $self = this;
+        let opts = {
+            onstart: () => {
+                console.info('[App] record start');
+            },
+            onstop: blob => {
+                console.info('[App] record stop');
+                $self.stopRecord(blob);
+            },
+            onerror: e => {
+                console.error('error', e);
+            }
+        };
+
+        let recorder = new QBMediaRecorder(opts);
+        recorder.start(stream);
+
+        $self.setState({recorder: recorder});
+    }
+
+    stopRecord(blob) {
+        let $state = this.state;
+        $state.recorder.stop();
+        $state.recorder.download(`video-${$state.targetUser.name}`, blob);
+        this.setState({currentSession: null, targetUser: null, callState: false, recorder: null});
     }
 
     render() {
