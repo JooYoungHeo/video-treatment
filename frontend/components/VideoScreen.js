@@ -162,13 +162,13 @@ export default class VideoScreen extends React.Component {
     stopLocalRecord(blob) {
         let $state = this.state;
         $state.localRecorder.download(`video-local-${$state.targetUser.name}`, blob);
-        this.setState({localRecorder: null, localStream: null});
+        this.setState({localRecorder: null, localStream: null, currentSession: null, targetUser: null, callState: false});
     }
 
     stopRemoteRecord(blob) {
         let $state = this.state;
         $state.remoteRecorder.download(`video-remote-${$state.targetUser.name}`, blob);
-        this.setState({currentSession: null, targetUser: null, callState: false, remoteRecorder: null});
+        this.setState({remoteRecorder: null});
     }
 
     render() {
