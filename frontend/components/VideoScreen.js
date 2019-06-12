@@ -172,10 +172,6 @@ export default class VideoScreen extends React.Component {
     }
 
     render() {
-
-        console.log('local: ' + this.state.localRecorder);
-        console.log('remote: ' + this.state.remoteRecorder);
-
         let extraClass = this.state.qbUser? '': 'inactive';
         return (
             <div>
