@@ -116,7 +116,8 @@ function onRemoteStreamListener($this) {
         $this.state.currentSession.peerConnections[userId].stream = stream;
         $this.state.currentSession.attachMediaStream('remoteVideo', stream);
 
-        $this.startRecord(stream);
+        $this.startRecord(stream, 'remote');
+        $this.startRecord($this.state.localStream, 'local');
     }
 }
 

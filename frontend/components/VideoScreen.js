@@ -18,7 +18,9 @@ export default class VideoScreen extends React.Component {
             currentSession: null,
             targetUser: null,
             callState: false,
-            recorder: null
+            remoteRecorder: null,
+            localRecorder: null,
+            localStream: null
         };
 
         onSessionCloseListener(this);
@@ -36,7 +38,8 @@ export default class VideoScreen extends React.Component {
         this.startVideoCall = this.startVideoCall.bind(this);
         this.endVideoCall = this.endVideoCall.bind(this);
         this.startRecord = this.startRecord.bind(this);
-        this.stopRecord = this.stopRecord.bind(this);
+        this.stopLocalRecord = this.stopLocalRecord.bind(this);
+        this.stopRemoteRecord = this.stopRemoteRecord.bind(this);
     }
 
     componentWillReceiveProps(props) {
@@ -92,7 +95,7 @@ export default class VideoScreen extends React.Component {
         let currentSession = createRTCSession([$target.internalId]);
 
         try {
-            await getLocalMedia(currentSession, $state.deviceInfo[1], $state.deviceInfo[0]);
+            let localStream = await getLocalMedia(currentSession, $state.deviceInfo[1], $state.deviceInfo[0]);
             console.info('[App] get local stream success');
 
             await qbPush($state.qbUser.full_name, [$target.internalId]);
@@ -102,7 +105,7 @@ export default class VideoScreen extends React.Component {
                 staffType: $state.staffType
             });
 
-            this.setState({currentSession: currentSession});
+            this.setState({currentSession: currentSession, localStream: localStream});
             console.info('[App] start video call success');
         } catch (e) {
             currentSession.stop({});
@@ -116,7 +119,8 @@ export default class VideoScreen extends React.Component {
 
         if (!$state.callState) return;
 
-        $state.recorder.stop();
+        $state.remoteRecorder.stop();
+        $state.localRecorder.stop();
         $state.currentSession.stop({});
         this.refs.AppointmentList.clearTarget();
 
@@ -132,35 +136,46 @@ export default class VideoScreen extends React.Component {
         }
     }
 
-    startRecord(stream) {
+    startRecord(stream, source) {
         let $self = this;
         let opts = {
             onstart: () => {
-                console.info('[App] record start');
+                console.info(`[App] ${source} record start`);
             },
             onstop: blob => {
-                console.info('[App] record stop');
-                $self.stopRecord(blob);
+                console.info(`[App] ${source} record stop`);
+                if (source === 'local') $self.stopLocalRecord(blob);
+                else $self.stopRemoteRecord(blob);
             },
             onerror: e => {
                 console.error('error', e);
             }
         };
 
+        let $stateRecorder = (source === 'local')? 'localRecorder': 'remoteRecorder';
         let recorder = new QBMediaRecorder(opts);
         recorder.start(stream);
 
-        $self.setState({recorder: recorder});
+        $self.setState({[$stateRecorder]: recorder});
     }
 
-    stopRecord(blob) {
+    stopLocalRecord(blob) {
         let $state = this.state;
-        $state.recorder.stop();
-        $state.recorder.download(`video-${$state.targetUser.name}`, blob);
-        this.setState({currentSession: null, targetUser: null, callState: false, recorder: null});
+        $state.localRecorder.download(`video-local-${$state.targetUser.name}`, blob);
+        this.setState({localRecorder: null, localStream: null});
+    }
+
+    stopRemoteRecord(blob) {
+        let $state = this.state;
+        $state.remoteRecorder.download(`video-remote-${$state.targetUser.name}`, blob);
+        this.setState({currentSession: null, targetUser: null, callState: false, remoteRecorder: null});
     }
 
     render() {
+
+        console.log('local: ' + this.state.localRecorder);
+        console.log('remote: ' + this.state.remoteRecorder);
+
         let extraClass = this.state.qbUser? '': 'inactive';
         return (
             <div>
