@@ -1,6 +1,5 @@
 /node_modules/
 /.idea/
-/public/bundle.js
 properties.json
 /build/
 test*
