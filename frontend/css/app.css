@@ -1,0 +1,35 @@
+.container{width:100%;margin-top:50px}
+.container .left-side{width:25%}
+.container .center-side{width:75%}
+
+.join-state{margin-left:5px}
+
+.target{font-size:13px}
+.target .target-text{color:#ff5e00;font-weight:bold}
+.target .staff-desc{margin-left:10px}
+.target .staff-radio{margin-left:10px;margin-right:5px}
+
+.main-section{margin-top:-20px}
+
+.video-section{width:67%}
+.inactive{opacity:0.3}
+.appointment-section{width:33%}
+
+.qb-video-remote{width:533px;height:300px;position:relative;z-index:1}
+#remoteVideo{width:100%;height:100%;background:#bfbfbf}
+.qb-video-local{width:150px;height:80px;position:relative;left:7px;top:-295px;z-index:2}
+.video-btn{margin-top:20px}
+.video-btn .call-btn{margin-left:20px}
+#localVideo{width:100%;height:100%;float:right;background:#bfbfbf;border:1px solid blak}
+
+.appointment-list .appointment{cursor:pointer}
+.appointment-list .user-status{width:50px;height:20px;padding-left:9px;padding-top:1px;border-radius:10px;font-size:12px;float:right;font-weight:bold;background-color:#eaeaea}
+.appointment-list .small-text{font-size:10px}
+.appointment-list .none{color:#000000}
+.appointment-list .pre{color:#6B66FF}
+.appointment-list .ready{color:#f29961}
+.appointment-list .ing{color:#ff0000}
+
+.modal-income-call{text-align:center}
+.modal-income-call .decline{margin-right:10px}
+.modal-income-call .accept{margin-left:10px}

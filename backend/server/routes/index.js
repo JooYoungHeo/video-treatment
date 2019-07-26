@@ -1,9 +1,8 @@
-import express from 'express';
+import Router from 'koa-router';
+import v1 from './v1';
 
-const router = express.Router();
+const api = new Router();
 
-router.get('/', (req, res) => {
-    res.send('indexing');
-});
+api.use('/v1', v1.routes());
 
-export default router;
+export default api;
